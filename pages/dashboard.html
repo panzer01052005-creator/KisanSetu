@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="KisanSetu helps farmers plan procurement visits, track queues, and understand procurement status.">
+  <title>KisanSetu | Farmer procurement platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/dashboard.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="home.html" aria-label="KisanSetu home"><span class="brand-mark" aria-hidden="true"><i></i><b></b></span><span>Kisan<span>Setu</span></span></a>
+    <nav aria-label="Main navigation"><a class="active" href="#dashboard">Dashboard</a><a href="#schedule">Schedules</a><a href="#status">Procurement status</a></nav>
+    <div class="header-right"><a class="notification" href="#notifications" aria-label="Notifications">♧<b></b></a><span class="profile">RK <small>⌄</small></span></div>
+  </header>
+
+  <main id="dashboard">
+    <section class="intro"><div><p class="overline">Monday, 24 August 2026 <span class="live"></span> Live updates</p><h1>Good morning, Ramesh.</h1><p class="subtitle">Your procurement day, at a glance.</p></div><div class="weather"><span class="sun">◒</span><div><strong>28°C</strong><small>Partly cloudy · Shivaji Nagar</small></div></div></section>
+
+    <section class="summary" aria-label="Procurement summary">
+      <article class="summary-card featured"><div class="card-label">Active token <span>▣</span></div><strong class="large">KT-2841</strong><p><mark>Confirmed</mark> Today · 11:30 AM</p><a href="#status">View token <b>→</b></a></article>
+      <article class="summary-card"><div class="card-label">Live queue <span>↻</span></div><strong class="large">#07</strong><p><em>Moving steadily</em> · approx. 35 min</p><div class="progress"><i></i></div><a href="#dashboard">Refresh position <b>↻</b></a></article>
+      <article class="summary-card"><div class="card-label">Next payment <span>▤</span></div><strong class="large">₹ 42,750</strong><p>Expected by 28 Aug 2026</p><a href="#activity">Payment history <b>→</b></a></article>
+    </section>
+
+    <section class="columns">
+      <article class="panel" id="schedule"><div class="panel-header"><div><p class="overline">Plan ahead</p><h2>Procurement schedule</h2></div><a class="outline-button" href="#schedule">View calendar　▦</a></div><div class="schedule-list">
+        <div class="schedule-row"><span class="crop green">W</span><div class="schedule-info"><strong>Wheat <small class="today">Today · 24 Aug</small></strong><span>⌖　Shivaji Nagar Mandi</span></div><div class="time"><strong>08:00 - 18:00</strong><small>12 slots left</small></div><a class="arrow" href="#schedule">→</a></div>
+        <div class="schedule-row"><span class="crop yellow">S</span><div class="schedule-info"><strong>Soybean <small>Tomorrow · 25 Aug</small></strong><span>⌖　Dharampur Collection Hub</span></div><div class="time"><strong>07:00 - 16:00</strong><small>28 slots left</small></div><a class="arrow" href="#schedule">→</a></div>
+        <div class="schedule-row"><span class="crop blue">C</span><div class="schedule-info"><strong>Cotton <small>Wed · 26 Aug</small></strong><span>⌖　Shivaji Nagar Mandi</span></div><div class="time"><strong>09:00 - 17:00</strong><small>42 slots left</small></div><a class="arrow" href="#schedule">→</a></div>
+      </div></article>
+
+      <article class="panel" id="status"><div class="panel-header"><div><p class="overline">Your records</p><h2>Recent activity</h2></div><span class="more">•••</span></div><div class="timeline" id="activity">
+        <div class="timeline-row"><i>✓</i><div><strong>Procurement completed</strong><span>Wheat · 18 quintals</span></div><time>21 Aug 2026</time></div>
+        <div class="timeline-row"><i>✓</i><div><strong>Quality check passed</strong><span>Grade A · Shivaji Nagar Mandi</span></div><time>21 Aug 2026</time></div>
+        <div class="timeline-row"><i>✓</i><div><strong>Token generated</strong><span>KT-2841 · 22 Aug 2026</span></div><time>22 Aug 2026</time></div>
+        <div class="timeline-row current"><i>◷</i><div><strong>Scheduled for delivery</strong><span>Today · 11:30 AM</span></div><time>In progress</time></div>
+      </div><a class="all-activity" href="#activity">See all activity　→</a></article>
+    </section>
+
+    <section class="support"><span class="support-icon">✉</span><div><strong>Need help with your procurement?</strong><small>Talk to our support team in your language.</small></div><a href="#help">Contact support　→</a><span class="support-art">?</span></section>
+  </main>
+
+  <footer><span>© 2026 KisanSetu</span><span>Built for farmers, with care.</span><span><a href="#help">Help center</a> · <a href="#privacy">Privacy</a></span></footer>
+</body>
+</html>
