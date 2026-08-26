@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login to KisanSetu as a farmer or buyer.">
+  <title>Login | KisanSetu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="login-page">
+    <a class="brand" href="../home/index.html" aria-label="KisanSetu home"><span class="brand-mark" aria-hidden="true"><i></i><b></b></span><span>Kisan<span>Setu</span></span></a>
+    <section class="login-card" aria-labelledby="login-title">
+      <div class="card-heading"><p class="eyebrow">Welcome back</p><h1 id="login-title">Login</h1><p>Select your account type.</p></div>
+      <div class="role-grid">
+        <a class="role-card seller" href="../dashboard/index.html"><span class="role-icon">♧</span><span class="role-copy"><strong>I'm a farmer</strong><small>Sell crops and track payments</small></span><span class="role-arrow">→</span></a>
+        <a class="role-card buyer" href="#buyer-login"><span class="role-icon">▤</span><span class="role-copy"><strong>I'm a buyer</strong><small>Find produce and manage purchases</small></span><span class="role-arrow">→</span></a>
+      </div>
+      <div class="divider"><span>or login with your account</span></div>
+      <form class="login-form" action="#dashboard" method="get"><label for="mobile">Mobile number or email</label><input id="mobile" name="mobile" type="text" placeholder="Enter mobile number or email" required><button type="submit">Continue <span>→</span></button></form>
+      <p class="terms">Secure login for the KisanSetu community.</p>
+    </section>
+    <p class="support-note">Need help signing in? <a href="#help">Contact support</a></p>
+  </main>
+</body>
+</html>
