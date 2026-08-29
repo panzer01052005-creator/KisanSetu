@@ -14,15 +14,20 @@
 <body>
   <main class="login-page">
     <a class="brand" href="../home/index.html" aria-label="KisanSetu home"><span class="brand-mark" aria-hidden="true"><i></i><b></b></span><span>Kisan<span>Setu</span></span></a>
+
     <section class="login-card" aria-labelledby="login-title">
-      <div class="card-heading"><p class="eyebrow">Welcome</p><h1 id="login-title">Access your account</h1><p>Choose how you want to continue.</p></div>
+      <div class="card-heading">
+        <p class="eyebrow">Welcome</p>
+        <h1 id="login-title">Access your account</h1>
+        <p>Choose how you want to continue.</p>
+      </div>
 
       <div class="auth-toggle" role="tablist" aria-label="Authentication options">
         <button class="auth-toggle-btn active" type="button" data-auth-mode="login" aria-selected="true">Log in</button>
         <button class="auth-toggle-btn" type="button" data-auth-mode="signup" aria-selected="false">Sign up</button>
       </div>
 
-      <div class="auth-panel active" id="login-panel" role="tabpanel" aria-label="Login form">
+      <div class="auth-panel" id="login-panel" role="tabpanel" aria-label="Login form" hidden>
         <form class="login-form" action="#dashboard" method="get">
           <label for="mobile">Mobile number or email</label>
           <input id="mobile" name="mobile" type="text" placeholder="Enter mobile number or email" required>
@@ -47,6 +52,7 @@
 
       <p class="terms">Secure login for the KisanSetu community.</p>
     </section>
+
     <p class="support-note">Need help signing in? <a href="#help">Contact support</a></p>
   </main>
 </body>

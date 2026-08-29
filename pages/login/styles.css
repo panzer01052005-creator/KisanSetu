@@ -41,7 +41,7 @@ a {
     font: 700 21px 'Space Grotesk', sans-serif;
 }
 
-.brand>span:last-child span {
+.brand > span:last-child span {
     color: var(--green);
 }
 
@@ -240,54 +240,4 @@ a {
     .card-heading h1 {
         font-size: 25px;
     }
-}
-
-.login-card {
-    width: min(400px, 100%);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 18px 45px #304f3618;
-}
-
-.card-heading p:last-child {
-    margin-bottom: 20px;
-}
-
-.role-grid {
-    gap: 8px;
-}
-
-.role-card {
-    padding: 11px 12px;
-    gap: 10px;
-}
-
-.role-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 17px;
-}
-
-.role-copy small {
-    margin-top: 2px;
-}
-
-.divider {
-    margin: 20px 0 14px;
-}
-
-.login-form input {
-    padding: 10px;
-}
-
-.login-form button {
-    padding: 10px;
-}
-
-.terms {
-    margin-top: 13px;
-}
-
-.support-note {
-    margin-top: 14px;
 }
