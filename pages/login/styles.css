@@ -121,99 +121,50 @@ a {
     font-size: 12px;
 }
 
-.role-grid {
+.auth-toggle {
     display: grid;
-    gap: 11px;
-}
-
-.role-card {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    padding: 15px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 6px;
+    margin-bottom: 20px;
     border: 1px solid var(--line);
-    border-radius: 9px;
-    transition: transform .2s, box-shadow .2s, border-color .2s;
+    border-radius: 10px;
+    background: #f5f8f4;
 }
 
-.role-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px #304f3612;
-    border-color: #a8c9ab;
-}
-
-.role-card.seller {
-    background: #f0f7ed;
-}
-
-.role-card.buyer {
-    background: #f8f5ec;
-}
-
-.role-icon {
-    display: grid;
-    place-items: center;
-    width: 38px;
-    height: 38px;
+.auth-toggle-btn {
+    border: 0;
     border-radius: 8px;
-    color: var(--green);
-    background: #dcefdc;
-    font-size: 20px;
+    padding: 10px 12px;
+    background: transparent;
+    color: var(--muted);
+    font: 600 12px 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all .2s ease;
 }
 
-.buyer .role-icon {
-    color: #aa7630;
-    background: #f8e8c8;
+.auth-toggle-btn.active {
+    background: var(--green);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(23, 107, 69, 0.18);
 }
 
-.role-copy {
-    flex: 1;
+.auth-panel {
+    display: none;
 }
 
-.role-copy strong,
-.role-copy small {
+.auth-panel.active {
     display: block;
 }
 
-.role-copy strong {
-    font: 600 14px 'Space Grotesk', sans-serif;
-}
-
-.role-copy small {
-    margin-top: 3px;
-    color: var(--muted);
-    font-size: 10px;
-}
-
-.role-arrow {
-    color: var(--green);
-    font-size: 20px;
-}
-
-.buyer .role-arrow {
-    color: #aa7630;
-}
-
-.divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 27px 0 18px;
-    color: #9aa69c;
-    font-size: 10px;
-}
-
-.divider:before,
-.divider:after {
-    content: '';
-    height: 1px;
-    flex: 1;
-    background: var(--line);
+.login-form {
+    display: grid;
+    gap: 10px;
 }
 
 .login-form label {
     display: block;
-    margin-bottom: 7px;
+    margin-bottom: 2px;
     font-size: 11px;
     font-weight: 700;
 }
@@ -247,6 +198,10 @@ a {
 
 .login-form button span {
     font-size: 17px;
+}
+
+.signup-form {
+    gap: 8px;
 }
 
 .terms {

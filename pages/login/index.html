@@ -15,13 +15,36 @@
   <main class="login-page">
     <a class="brand" href="../home/index.html" aria-label="KisanSetu home"><span class="brand-mark" aria-hidden="true"><i></i><b></b></span><span>Kisan<span>Setu</span></span></a>
     <section class="login-card" aria-labelledby="login-title">
-      <div class="card-heading"><p class="eyebrow">Welcome back</p><h1 id="login-title">Login</h1><p>Select your account type.</p></div>
-      <div class="role-grid" aria-label="Choose account type">
-        <a class="role-card seller" href="../dashboard/index.html"><span class="role-icon">♧</span><span class="role-copy"><strong>I'm a farmer</strong><small>Sell crops and track payments</small></span><span class="role-arrow">→</span></a>
-        <a class="role-card buyer" href="#buyer-login"><span class="role-icon">▤</span><span class="role-copy"><strong>I'm a buyer</strong><small>Find produce and manage purchases</small></span><span class="role-arrow">→</span></a>
+      <div class="card-heading"><p class="eyebrow">Welcome</p><h1 id="login-title">Access your account</h1><p>Choose how you want to continue.</p></div>
+
+      <div class="auth-toggle" role="tablist" aria-label="Authentication options">
+        <button class="auth-toggle-btn active" type="button" data-auth-mode="login" aria-selected="true">Log in</button>
+        <button class="auth-toggle-btn" type="button" data-auth-mode="signup" aria-selected="false">Sign up</button>
       </div>
-      <div class="divider"><span>or login with your account</span></div>
-      <form class="login-form" action="#dashboard" method="get" ><label for="mobile">Mobile number or email</label><input id="mobile" name="mobile" type="text" placeholder="Enter mobile number or email" required><button type="submit">Continue <span>→</span></button></form>
+
+      <div class="auth-panel active" id="login-panel" role="tabpanel" aria-label="Login form">
+        <form class="login-form" action="#dashboard" method="get">
+          <label for="mobile">Mobile number or email</label>
+          <input id="mobile" name="mobile" type="text" placeholder="Enter mobile number or email" required>
+          <button type="submit">Continue <span>→</span></button>
+        </form>
+      </div>
+
+      <div class="auth-panel" id="signup-panel" role="tabpanel" aria-label="Sign up form" hidden>
+        <form class="login-form signup-form" action="#dashboard" method="get">
+          <label for="full-name">Full name</label>
+          <input id="full-name" name="fullName" type="text" placeholder="Enter your full name" required>
+
+          <label for="signup-email">Email address</label>
+          <input id="signup-email" name="email" type="email" placeholder="Enter your email" required>
+
+          <label for="signup-mobile">Mobile number</label>
+          <input id="signup-mobile" name="mobile" type="tel" placeholder="Enter your mobile number" required>
+
+          <button type="submit">Create account <span>→</span></button>
+        </form>
+      </div>
+
       <p class="terms">Secure login for the KisanSetu community.</p>
     </section>
     <p class="support-note">Need help signing in? <a href="#help">Contact support</a></p>

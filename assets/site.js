@@ -29,6 +29,23 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     })
 
+    document.querySelectorAll('.auth-toggle-btn').forEach((button) => {
+        button.addEventListener('click', () => {
+            const targetMode = button.dataset.authMode
+            document.querySelectorAll('.auth-toggle-btn').forEach((toggle) => {
+                const isActive = toggle === button
+                toggle.classList.toggle('active', isActive)
+                toggle.setAttribute('aria-selected', String(isActive))
+            })
+
+            document.querySelectorAll('.auth-panel').forEach((panel) => {
+                const isActive = panel.id === `${targetMode}-panel`
+                panel.classList.toggle('active', isActive)
+                panel.hidden = !isActive
+            })
+        })
+    })
+
     document.querySelectorAll('form').forEach((form) => {
         form.addEventListener('submit', (event) => {
             if (form.closest('.login-modal, .login-card')) {
