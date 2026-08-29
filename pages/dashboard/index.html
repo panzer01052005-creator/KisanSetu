@@ -8,8 +8,54 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
   <link rel="stylesheet" href="styles.css">
   <script src="../../assets/site.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const fullName = 'Rajesh Yadav';
+      const greetingElement = document.getElementById('dashboard-greeting');
+      const nameElement = document.getElementById('user-full-name');
+      const languageSelect = document.querySelector('.language-select');
+
+      const getSalutation = (lang = 'en') => {
+        const hour = new Date().getHours();
+        if (lang === 'hi') {
+          if (hour < 12) return 'शुभ प्रभात';
+          if (hour < 17) return 'शुभ दोपहर';
+          if (hour < 21) return 'शुभ संध्या';
+          return 'शुभ रात्रि';
+        }
+        if (lang === 'mr') {
+          if (hour < 12) return 'शुभ सकाळ';
+          if (hour < 17) return 'शुभ दुपार';
+          if (hour < 21) return 'शुभ संध्याकाळ';
+          return 'शुभ रात्र';
+        }
+        if (hour < 12) return 'Good morning';
+        if (hour < 17) return 'Good afternoon';
+        if (hour < 21) return 'Good evening';
+        return 'Good night';
+      };
+
+      const updateGreeting = (lang = 'en') => {
+        if (greetingElement) {
+          greetingElement.textContent = `${getSalutation(lang)}, ${fullName}`;
+        }
+        if (nameElement) {
+          nameElement.textContent = fullName;
+        }
+      };
+
+      updateGreeting(languageSelect ? languageSelect.value : 'en');
+
+      if (languageSelect) {
+        languageSelect.addEventListener('change', (event) => {
+          updateGreeting(event.target.value);
+        });
+      }
+    });
+  </script>
 </head>
 <body>
   <div class="dashboard-shell">
@@ -22,20 +68,20 @@
       </div>
 
       <nav class="side-nav" aria-label="Dashboard navigation">
-        <a class="active" href="#overview">Overview</a>
-        <a href="#queue">Queue</a>
-        <a href="#orders">Orders</a>
-        <a href="#payments">Payments</a>
-        <a href="#support">Support</a>
+        <a class="active" href="#overview" data-i18n="dashboard.overview">Overview</a>
+        <a href="#queue" data-i18n="dashboard.queue">Queue</a>
+        <a href="#orders" data-i18n="dashboard.orders">Orders</a>
+        <a href="#payments" data-i18n="dashboard.payments">Payments</a>
+        <a href="#support" data-i18n="dashboard.support">Support</a>
       </nav>
 
       <div class="profile-card">
-        <p class="eyebrow">Account</p>
-        <h3>Farmer Profile</h3>
+        <p class="eyebrow" data-i18n="dashboard.account">Account</p>
+        <h3 data-i18n="dashboard.farmerProfile">Farmer Profile</h3>
         <div class="profile-meta">
           <span class="avatar">R</span>
           <div>
-            <strong>Rajesh Yadav</strong>
+            <strong id="user-full-name">Rajesh Yadav</strong>
             <small>Seller</small>
           </div>
         </div>
@@ -45,7 +91,7 @@
     <main class="dashboard-main">
       <header class="topbar">
         <div>
-          <p class="eyebrow">Good morning</p>
+          <p class="eyebrow" id="dashboard-greeting">Good morning, Rajesh Yadav</p>
           <h1>Dashboard</h1>
         </div>
 
@@ -53,35 +99,52 @@
           <label class="language-field" aria-label="Language selector">
             <select class="language-select" aria-label="Select language">
               <option value="en">English</option>
-              <option value="hi">हिन्दी</option>
-              <option value="mr">मराठी</option>
+              <option value="as">অসমীয়া</option>
               <option value="bn">বাংলা</option>
+              <option value="brx">बोड़ो</option>
+              <option value="doi">डोगरी</option>
+              <option value="gu">ગુજરાતી</option>
+              <option value="hi">हिन्दी</option>
+              <option value="ka">ಕನ್ನಡ</option>
+              <option value="ks">कश्मीरी</option>
+              <option value="kok">कोंकणी</option>
+              <option value="mai">मैथिली</option>
+              <option value="ml">മലയാളം</option>
+              <option value="mni">মণিপুরি</option>
+              <option value="mr">मराठी</option>
+              <option value="ne">नेपाली</option>
+              <option value="or">ଓଡ଼ିଆ</option>
+              <option value="pa">ਪੰਜਾਬੀ</option>
+              <option value="sa">संस्कृत</option>
+              <option value="sat">संताली</option>
+              <option value="sd">سنڌي</option>
               <option value="ta">தமிழ்</option>
               <option value="te">తెలుగు</option>
+              <option value="ur">اردو</option>
             </select>
           </label>
-          <a class="header-login" href="../home/index.html">Logout</a>
+          <a class="header-login" href="../home/index.html" data-i18n="dashboard.logout">Logout</a>
         </div>
       </header>
 
       <section class="stats-grid" id="overview">
         <article class="stat-card primary-card">
-          <span class="stat-label">Today’s queue</span>
+          <span class="stat-label" data-i18n="dashboard.todayQueue">Today’s queue</span>
           <strong>07</strong>
           <small>Expected arrival in 35 min</small>
         </article>
         <article class="stat-card">
-          <span class="stat-label">Total crop volume</span>
+          <span class="stat-label" data-i18n="dashboard.totalCrop">Total crop volume</span>
           <strong>2.4 ton</strong>
           <small>+8% from last week</small>
         </article>
         <article class="stat-card">
-          <span class="stat-label">Payment status</span>
+          <span class="stat-label" data-i18n="dashboard.paymentStatus">Payment status</span>
           <strong>₹18,450</strong>
           <small>Settled for this cycle</small>
         </article>
         <article class="stat-card">
-          <span class="stat-label">Inspection</span>
+          <span class="stat-label" data-i18n="dashboard.inspection">Inspection</span>
           <strong>On track</strong>
           <small>Quality check scheduled</small>
         </article>
@@ -91,8 +154,8 @@
         <article class="panel panel-wide" id="queue">
           <div class="panel-header">
             <div>
-              <p class="eyebrow">Live updates</p>
-              <h2>Queue tracking</h2>
+              <p class="eyebrow" data-i18n="dashboard.liveUpdates">Live updates</p>
+              <h2 data-i18n="dashboard.queueTracking">Queue tracking</h2>
             </div>
             <span class="pill success">Live</span>
           </div>
@@ -128,8 +191,8 @@
         <article class="panel" id="orders">
           <div class="panel-header">
             <div>
-              <p class="eyebrow">Orders</p>
-              <h2>Recent activity</h2>
+              <p class="eyebrow" data-i18n="dashboard.orders">Orders</p>
+              <h2 data-i18n="dashboard.recentActivity">Recent activity</h2>
             </div>
           </div>
 
@@ -161,8 +224,8 @@
         <article class="panel" id="payments">
           <div class="panel-header">
             <div>
-              <p class="eyebrow">Payment</p>
-              <h2>Settlement</h2>
+              <p class="eyebrow" data-i18n="dashboard.payments">Payment</p>
+              <h2 data-i18n="dashboard.settlement">Settlement</h2>
             </div>
           </div>
 
@@ -175,8 +238,8 @@
         <article class="panel panel-wide" id="support">
           <div class="panel-header">
             <div>
-              <p class="eyebrow">Support</p>
-              <h2>Farm assistance</h2>
+              <p class="eyebrow" data-i18n="dashboard.support">Support</p>
+              <h2 data-i18n="dashboard.farmAssistance">Farm assistance</h2>
             </div>
           </div>
 
@@ -184,21 +247,21 @@
             <div class="support-item">
               <span class="icon">☎</span>
               <div>
-                <strong>Help line</strong>
+                <strong data-i18n="dashboard.helpLine">Help line</strong>
                 <small>Call support</small>
               </div>
             </div>
             <div class="support-item">
               <span class="icon">▣</span>
               <div>
-                <strong>Crop guide</strong>
+                <strong data-i18n="dashboard.cropGuide">Crop guide</strong>
                 <small>Recommended practices</small>
               </div>
             </div>
             <div class="support-item">
               <span class="icon">✓</span>
               <div>
-                <strong>Verification</strong>
+                <strong data-i18n="dashboard.verification">Verification</strong>
                 <small>Documents complete</small>
               </div>
             </div>
