@@ -47,8 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     document.querySelectorAll('.auth-panel').forEach((panel) => {
-        panel.classList.remove('active')
-        panel.hidden = true
+        const isLogin = panel.id === 'login-panel'
+        panel.classList.toggle('active', isLogin)
+        panel.hidden = !isLogin
     })
 
     document.querySelectorAll('form').forEach((form) => {

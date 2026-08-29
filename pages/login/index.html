@@ -27,10 +27,14 @@
         <button class="auth-toggle-btn" type="button" data-auth-mode="signup" aria-selected="false">Sign up</button>
       </div>
 
-      <div class="auth-panel" id="login-panel" role="tabpanel" aria-label="Login form" hidden>
+      <div class="auth-panel active" id="login-panel" role="tabpanel" aria-label="Login form">
         <form class="login-form" action="#dashboard" method="get">
           <label for="mobile">Mobile number or email</label>
           <input id="mobile" name="mobile" type="text" placeholder="Enter mobile number or email" required>
+
+          <label for="login-password">Password</label>
+          <input id="login-password" name="password" type="password" placeholder="Enter your password" required>
+
           <button type="submit">Continue <span>→</span></button>
         </form>
       </div>
@@ -45,6 +49,9 @@
 
           <label for="signup-mobile">Mobile number</label>
           <input id="signup-mobile" name="mobile" type="tel" placeholder="Enter your mobile number" required>
+
+          <label for="signup-password">Password</label>
+          <input id="signup-password" name="password" type="password" placeholder="Create a password" required>
 
           <button type="submit">Create account <span>→</span></button>
         </form>
