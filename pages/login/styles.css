@@ -32,6 +32,12 @@ a {
     padding: 34px 20px;
 }
 
+.login-page-actions {
+    position: absolute;
+    top: 26px;
+    right: clamp(20px, 6vw, 90px);
+}
+
 .brand {
     position: absolute;
     top: 31px;
@@ -122,12 +128,27 @@ a {
     font-size: 12px;
 }
 
+.language-field {
+    display: inline-flex;
+    align-items: center;
+}
+
+.language-select {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 9px 12px;
+    background: #f9fbf8;
+    color: var(--ink);
+    font: 700 11px 'DM Sans', sans-serif;
+    cursor: pointer;
+}
+
 .auth-toggle {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
     padding: 6px;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
     border: 1px solid var(--line);
     border-radius: 10px;
     background: #f5f8f4;
@@ -150,12 +171,57 @@ a {
     box-shadow: 0 8px 18px rgba(23, 107, 69, 0.18);
 }
 
+.role-choice {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0 0 18px;
+}
+
+.role-btn {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 9px 10px;
+    background: #f9faf8;
+    color: var(--muted);
+    font: 600 11px 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.role-btn.active {
+    border-color: #b9ddc0;
+    background: #eaf5ec;
+    color: var(--green);
+}
+
 .auth-panel {
     display: none;
 }
 
 .auth-panel.active {
     display: block;
+}
+
+.language-picker {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.language-picker label {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.language-picker select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #fbfcfa;
+    color: var(--ink);
+    font-size: 12px;
 }
 
 .login-form {

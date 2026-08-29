@@ -35,6 +35,7 @@ footer {
     height: 78px;
     display: flex;
     align-items: center;
+    gap: 18px;
     border-bottom: 1px solid var(--line);
 }
 
@@ -42,6 +43,7 @@ footer {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-shrink: 0;
     font: 700 21px 'Space Grotesk', sans-serif;
 }
 
@@ -94,14 +96,40 @@ footer {
 
 .home-header nav {
     display: flex;
-    gap: 34px;
-    margin-left: 90px;
+    align-items: center;
+    gap: 24px;
+    margin-left: 0;
     color: var(--muted);
     font-size: 13px;
+    white-space: nowrap;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.language-field {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.language-select {
+    min-width: 120px;
+    border: 1px solid #cfded0;
+    border-radius: 6px;
+    padding: 9px 12px;
+    background: #f9fbf8;
+    color: var(--ink);
+    font: 700 11px 'DM Sans', sans-serif;
+    cursor: pointer;
 }
 
 .header-login {
-    margin-left: auto;
     padding: 10px 14px;
     border: 1px solid #cfded0;
     border-radius: 6px;
@@ -579,8 +607,17 @@ footer {
         display: none;
     }
 
+    .header-actions {
+        gap: 8px;
+    }
+
+    .language-select {
+        min-width: 100px;
+        padding: 7px 9px;
+        font-size: 10px;
+    }
+
     .header-login {
-        margin-left: auto;
         padding: 8px;
         font-size: 10px;
     }
@@ -782,12 +819,56 @@ footer {
     color: #fff;
 }
 
+.role-choice {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0 0 14px;
+}
+
+.role-btn {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 10px;
+    background: #f9faf8;
+    color: var(--muted);
+    font: 600 11px 'DM Sans', sans-serif;
+    cursor: pointer;
+}
+
+.role-btn.active {
+    border-color: #b9ddc0;
+    background: #eaf5ec;
+    color: var(--green);
+}
+
 .auth-panel {
     display: none;
 }
 
 .auth-panel.active {
     display: block;
+}
+
+.language-picker {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.language-picker label {
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.language-picker select {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #fbfcfa;
+    color: var(--ink);
+    font-size: 11px;
 }
 
 .compact-form {

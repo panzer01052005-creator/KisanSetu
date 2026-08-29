@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="KisanSetu dashboard for farmers and buyers.">
+  <title>Dashboard | KisanSetu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="../../assets/site.js" defer></script>
+</head>
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <a class="brand" href="../home/index.html" aria-label="KisanSetu home">
+          <span class="brand-mark" aria-hidden="true"><i></i><b></b></span>
+          <span>Kisan<span>Setu</span></span>
+        </a>
+      </div>
+
+      <nav class="side-nav" aria-label="Dashboard navigation">
+        <a class="active" href="#overview">Overview</a>
+        <a href="#queue">Queue</a>
+        <a href="#orders">Orders</a>
+        <a href="#payments">Payments</a>
+        <a href="#support">Support</a>
+      </nav>
+
+      <div class="profile-card">
+        <p class="eyebrow">Account</p>
+        <h3>Farmer Profile</h3>
+        <div class="profile-meta">
+          <span class="avatar">R</span>
+          <div>
+            <strong>Rajesh Yadav</strong>
+            <small>Seller</small>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Good morning</p>
+          <h1>Dashboard</h1>
+        </div>
+
+        <div class="topbar-actions">
+          <label class="language-field" aria-label="Language selector">
+            <select class="language-select" aria-label="Select language">
+              <option value="en">English</option>
+              <option value="hi">हिन्दी</option>
+              <option value="mr">मराठी</option>
+              <option value="bn">বাংলা</option>
+              <option value="ta">தமிழ்</option>
+              <option value="te">తెలుగు</option>
+            </select>
+          </label>
+          <a class="header-login" href="../home/index.html">Logout</a>
+        </div>
+      </header>
+
+      <section class="stats-grid" id="overview">
+        <article class="stat-card primary-card">
+          <span class="stat-label">Today’s queue</span>
+          <strong>07</strong>
+          <small>Expected arrival in 35 min</small>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Total crop volume</span>
+          <strong>2.4 ton</strong>
+          <small>+8% from last week</small>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Payment status</span>
+          <strong>₹18,450</strong>
+          <small>Settled for this cycle</small>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Inspection</span>
+          <strong>On track</strong>
+          <small>Quality check scheduled</small>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel panel-wide" id="queue">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Live updates</p>
+              <h2>Queue tracking</h2>
+            </div>
+            <span class="pill success">Live</span>
+          </div>
+
+          <div class="queue-list">
+            <div class="queue-item active">
+              <span class="queue-rank">#07</span>
+              <div>
+                <strong>Rajesh Yadav</strong>
+                <small>Tomato • 500 kg</small>
+              </div>
+              <span class="queue-time">35 min</span>
+            </div>
+            <div class="queue-item">
+              <span class="queue-rank">#08</span>
+              <div>
+                <strong>Santosh Verma</strong>
+                <small>Onion • 400 kg</small>
+              </div>
+              <span class="queue-time">42 min</span>
+            </div>
+            <div class="queue-item">
+              <span class="queue-rank">#09</span>
+              <div>
+                <strong>Preeti Singh</strong>
+                <small>Wheat • 700 kg</small>
+              </div>
+              <span class="queue-time">48 min</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel" id="orders">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Orders</p>
+              <h2>Recent activity</h2>
+            </div>
+          </div>
+
+          <ul class="feed-list">
+            <li>
+              <span class="feed-dot green"></span>
+              <div>
+                <strong>Harvest submitted</strong>
+                <small>2 hours ago</small>
+              </div>
+            </li>
+            <li>
+              <span class="feed-dot amber"></span>
+              <div>
+                <strong>Quality inspection pending</strong>
+                <small>30 minutes ago</small>
+              </div>
+            </li>
+            <li>
+              <span class="feed-dot blue"></span>
+              <div>
+                <strong>Transport schedule confirmed</strong>
+                <small>Today</small>
+              </div>
+            </li>
+          </ul>
+        </article>
+
+        <article class="panel" id="payments">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Payment</p>
+              <h2>Settlement</h2>
+            </div>
+          </div>
+
+          <div class="payment-box">
+            <strong>₹18,450</strong>
+            <small>Expected payout on 30 Aug</small>
+          </div>
+        </article>
+
+        <article class="panel panel-wide" id="support">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Support</p>
+              <h2>Farm assistance</h2>
+            </div>
+          </div>
+
+          <div class="support-row">
+            <div class="support-item">
+              <span class="icon">☎</span>
+              <div>
+                <strong>Help line</strong>
+                <small>Call support</small>
+              </div>
+            </div>
+            <div class="support-item">
+              <span class="icon">▣</span>
+              <div>
+                <strong>Crop guide</strong>
+                <small>Recommended practices</small>
+              </div>
+            </div>
+            <div class="support-item">
+              <span class="icon">✓</span>
+              <div>
+                <strong>Verification</strong>
+                <small>Documents complete</small>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

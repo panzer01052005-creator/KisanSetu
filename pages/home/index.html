@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,30 +8,122 @@
   <title>KisanSetu | Simple procurement for every farmer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="../../assets/site.js" defer></script>
 </head>
+
 <body>
   <header class="home-header">
-    <a class="brand" href="index.html" aria-label="KisanSetu home"><span class="brand-mark" aria-hidden="true"><i></i><b></b></span><span>Kisan<span>Setu</span></span></a>
-    <nav aria-label="Home navigation"><a href="#how-it-works">How it works</a><a href="#benefits">For farmers</a><a href="#help">Help</a></nav>
-    <a class="header-login" href="#login">Login</a>
+    <a class="brand" href="index.html" aria-label="KisanSetu home"><span class="brand-mark"
+        aria-hidden="true"><i></i><b></b></span><span>Kisan<span>Setu</span></span></a>
+    <nav aria-label="Home navigation">
+      <a href="#how-it-works" data-i18n="nav.how">How it works</a>
+      <a href="#benefits" data-i18n="nav.farmers">For farmers</a>
+      <a href="#help" data-i18n="nav.help">Help</a>
+    </nav>
+    <div class="header-actions">
+      <div class="language-field">
+        <select class="language-select" aria-label="Select language">
+          <option value="en">English</option>
+          <option value="as">অসমীয়া</option>
+          <option value="bn">বাংলা</option>
+          <option value="brx">बोड़ो</option>
+          <option value="doi">डोगरी</option>
+          <option value="gu">ગુજરાતી</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ka">ಕನ್ನಡ</option>
+          <option value="ks">कश्मीरी</option>
+          <option value="kok">कोंकणी</option>
+          <option value="mai">मैथिली</option>
+          <option value="ml">മലയാളം</option>
+          <option value="mni">মণিপুরি</option>
+          <option value="mr">मराठी</option>
+          <option value="ne">नेपाली</option>
+          <option value="or">ଓଡ଼ିଆ</option>
+          <option value="pa">ਪੰਜਾਬੀ</option>
+          <option value="sa">संस्कृत</option>
+          <option value="sat">संताली</option>
+          <option value="sd">سنڌي</option>
+          <option value="ta">தமிழ்</option>
+          <option value="te">తెలుగు</option>
+          <option value="ur">اردو</option>
+        </select>
+      </div>
+      <a class="header-login" href="#login" data-i18n="nav.login">Login</a>
+    </div>
   </header>
 
   <main>
     <section class="hero">
-      <div class="hero-copy"><p class="eyebrow"><span class="live-dot"></span> Procurement made predictable</p><h1>Sell your harvest<br><em>without the wait.</em></h1><p class="hero-text">KisanSetu gives you a clear time slot, a live place in the queue, and updates from quality check to payment.</p><div class="hero-actions"><a class="primary-button" href="../dashboard/index.html">Open farmer dashboard <span>→</span></a><a class="quiet-link" href="#how-it-works">See how it works <span>↓</span></a></div><div class="trust-line"><span class="avatars"><i>R</i><i>S</i><i>M</i></span><span>Trusted by 12,000+ farmers across Madhya Pradesh</span></div></div>
-      <div class="hero-visual"><div class="sun-disc"></div><div class="field-lines"></div><div class="visual-card token-card"><span class="mini-label">Your token is confirmed</span><strong>KT-2841</strong><div><span class="check">✓</span> Shivaji Nagar Mandi <b>11:30 AM</b></div></div><div class="visual-card queue-card"><span class="queue-icon">↻</span><div><small>Live queue</small><strong>#07 <em>Moving steadily</em></strong></div><span class="queue-time">35 min</span></div><div class="farmer-figure"><span class="head"></span><span class="body"></span><span class="arm"></span><span class="basket"></span></div></div>
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="hero.tag"><span class="live-dot"></span> Procurement made predictable</p>
+        <h1 data-i18n="hero.title">Sell your harvest<br><em>without the wait.</em></h1>
+        <p class="hero-text" data-i18n="hero.text">KisanSetu gives you a clear time slot, a live place in the queue, and
+          updates from quality check to payment.</p>
+        <div class="hero-actions"><a class="primary-button" href="../dashboard/index.html"
+            data-i18n="hero.cta.primary">Open farmer dashboard <span>→</span></a><a class="quiet-link"
+            href="#how-it-works" data-i18n="hero.cta.secondary">See how it works <span>↓</span></a></div>
+        <div class="trust-line"><span class="avatars"><i>R</i><i>S</i><i>M</i></span><span
+            data-i18n="hero.trust">Trusted by 12,000+ farmers across Madhya Pradesh</span></div>
+      </div>
+      <div class="hero-visual">
+        <div class="sun-disc"></div>
+        <div class="field-lines"></div>
+        <div class="visual-card token-card"><span class="mini-label" data-i18n="hero.card.token">Your token is
+            confirmed</span><strong>KT-2841</strong>
+          <div><span class="check">✓</span> Shivaji Nagar Mandi <b>11:30 AM</b></div>
+        </div>
+        <div class="visual-card queue-card"><span class="queue-icon">↻</span>
+          <div><small data-i18n="hero.card.queue">Live queue</small><strong>#07 <em data-i18n="hero.card.moving">Moving
+                steadily</em></strong></div><span class="queue-time">35 min</span>
+        </div>
+        <div class="farmer-figure"><span class="head"></span><span class="body"></span><span class="arm"></span><span
+            class="basket"></span></div>
+      </div>
     </section>
 
-    <section class="proof-strip"><div><strong>12,000+</strong><span>farmers onboarded</span></div><div><strong>48</strong><span>collection centers</span></div><div><strong>98%</strong><span>on-time payments</span></div><div><strong>3 languages</strong><span>support available</span></div></section>
+    <section class="proof-strip">
+      <div><strong>12,000+</strong><span data-i18n="proof.farmers">farmers onboarded</span></div>
+      <div><strong>48</strong><span data-i18n="proof.centers">collection centers</span></div>
+      <div><strong>98%</strong><span data-i18n="proof.payments">on-time payments</span></div>
+      <div><strong>3 languages</strong><span data-i18n="proof.support">support available</span></div>
+    </section>
 
-    <section class="how" id="how-it-works"><div class="section-intro"><p class="eyebrow">A simpler harvest day</p><h2>Everything you need,<br>before you reach the mandi.</h2></div><div class="steps"><article><span class="step-number">01</span><span class="step-icon">▣</span><h3>Know your slot</h3><p>See crop-wise schedules and reserve a convenient delivery window.</p></article><article><span class="step-number">02</span><span class="step-icon">◷</span><h3>Skip the uncertainty</h3><p>Get a digital token and watch your live place in the queue.</p></article><article><span class="step-number">03</span><span class="step-icon">✓</span><h3>Track every step</h3><p>Follow quality checks, procurement status, and payment updates.</p></article></div></section>
+    <section class="how" id="how-it-works">
+      <div class="section-intro">
+        <p class="eyebrow" data-i18n="steps.eyebrow">A simpler harvest day</p>
+        <h2 data-i18n="steps.heading">Everything you need,<br>before you reach the mandi.</h2>
+      </div>
+      <div class="steps">
+        <article><span class="step-number">01</span><span class="step-icon">▣</span>
+          <h3 data-i18n="steps.one.title">Know your slot</h3>
+          <p data-i18n="steps.one.text">See crop-wise schedules and reserve a convenient delivery window.</p>
+        </article>
+        <article><span class="step-number">02</span><span class="step-icon">◷</span>
+          <h3 data-i18n="steps.two.title">Skip the uncertainty</h3>
+          <p data-i18n="steps.two.text">Get a digital token and watch your live place in the queue.</p>
+        </article>
+        <article><span class="step-number">03</span><span class="step-icon">✓</span>
+          <h3 data-i18n="steps.three.title">Track every step</h3>
+          <p data-i18n="steps.three.text">Follow quality checks, procurement status, and payment updates.</p>
+        </article>
+      </div>
+    </section>
 
-    <section class="bottom-cta" id="benefits"><div><p class="eyebrow">Your harvest. Your time.</p><h2>Plan with confidence.</h2><p>Spend less time waiting and more time on your farm.</p></div><a class="primary-button light-button" href="../dashboard/index.html">Start with your dashboard <span>→</span></a></section>
+    <section class="bottom-cta" id="benefits">
+      <div>
+        <p class="eyebrow" data-i18n="cta.eyebrow">Your harvest. Your time.</p>
+        <h2 data-i18n="cta.title">Plan with confidence.</h2>
+        <p data-i18n="cta.text">Spend less time waiting and more time on your farm.</p>
+      </div><a class="primary-button light-button" href="../dashboard/index.html" data-i18n="cta.button">Start with your
+        dashboard <span>→</span></a>
+    </section>
   </main>
-  <footer id="help"><span>© 2026 KisanSetu</span><span>Built for farmers, with care.</span><span>Help center · Privacy</span></footer>
+  <footer id="help"><span>© 2026 KisanSetu</span><span data-i18n="footer.tag">Built for farmers, with care.</span><span
+      data-i18n="footer.help">Help center · Privacy</span></footer>
 
   <section class="login-overlay" id="login" aria-label="Login options">
     <a class="login-backdrop" href="#" aria-label="Close login"></a>
@@ -45,7 +138,7 @@
       </div>
 
       <div class="auth-panel active" id="login-panel" role="tabpanel" aria-label="Login form">
-        <form class="login-form compact-form" action="#dashboard" method="get">
+        <form class="login-form compact-form" action="../dashboard/index.html" method="get">
           <label for="home-login">Mobile or email</label>
           <input id="home-login" name="mobile" type="text" placeholder="Enter mobile or email" required>
           <label for="home-password">Password</label>
@@ -55,7 +148,12 @@
       </div>
 
       <div class="auth-panel" id="signup-panel" role="tabpanel" aria-label="Sign up form" hidden>
-        <form class="login-form compact-form" action="#dashboard" method="get">
+        <div class="role-choice" aria-label="Choose account type">
+          <button class="role-btn active" type="button" data-role="seller">Seller</button>
+          <button class="role-btn" type="button" data-role="buyer">Buyer</button>
+        </div>
+
+        <form class="login-form compact-form" action="../dashboard/index.html" method="get">
           <label for="signup-name">Full name</label>
           <input id="signup-name" name="fullName" type="text" placeholder="Enter your full name" required>
           <label for="signup-email">Email</label>
@@ -70,4 +168,5 @@
     </div>
   </section>
 </body>
+
 </html>
