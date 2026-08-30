@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="KisanSetu detailed payment system for farmers.">
+  <title>Payments | KisanSetu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script src="../../assets/site.js" defer></script>
+</head>
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <a class="brand" href="../home/index.html" aria-label="KisanSetu home">
+          <span class="brand-mark" aria-hidden="true"><i></i><b></b></span>
+          <span>Kisan<span>Setu</span></span>
+        </a>
+      </div>
+
+      <nav class="side-nav" aria-label="Dashboard navigation">
+        <a href="../dashboard/index.html" data-i18n="dashboard.overview">Overview</a>
+        <a href="../dashboard/index.html#queue" data-i18n="dashboard.queue">Queue</a>
+        <a href="../dashboard/index.html#orders" data-i18n="dashboard.orders">Orders</a>
+        <a class="active" href="index.html" data-i18n="dashboard.payments">Payments</a>
+        <a href="../dashboard/index.html#support" data-i18n="dashboard.support">Support</a>
+      </nav>
+
+      <div class="profile-card">
+        <p class="eyebrow" data-i18n="dashboard.account">Account</p>
+        <h3 data-i18n="dashboard.farmerProfile">Farmer Profile</h3>
+        <div class="profile-meta">
+          <span class="avatar">R</span>
+          <div class="profile-details">
+            <strong>Rajesh Yadav</strong>
+            <small>Seller</small>
+            <span class="verification-status">✓ Verified</span>
+          </div>
+        </div>
+        <div class="profile-stats">
+          <div class="stat-item">
+            <span class="stat-value">35</span>
+            <span class="stat-label">Deliveries</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">98%</span>
+            <span class="stat-label">Rating</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">MP</span>
+            <span class="stat-label">Region</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" data-i18n="dashboard.payments">Payments</p>
+          <h1 data-i18n="payments.title">Payment History & Settlements</h1>
+        </div>
+
+        <div class="topbar-actions">
+          <label class="language-field" aria-label="Language selector">
+            <select class="language-select" aria-label="Select language">
+              <option value="en">English</option>
+              <option value="hi">हिन्दी</option>
+              <option value="mr">मराठी</option>
+            </select>
+          </label>
+          <a class="header-login" href="../home/index.html" data-i18n="dashboard.logout">Logout</a>
+        </div>
+      </header>
+
+      <!-- Payment Summary Cards -->
+      <section class="payment-summary">
+        <article class="summary-card primary-card">
+          <div class="summary-header">
+            <p class="eyebrow" data-i18n="payments.totalEarned">💰 Total Earned</p>
+            <strong>₹2,87,450</strong>
+          </div>
+          <small data-i18n="payments.allTime">All time earnings</small>
+        </article>
+
+        <article class="summary-card">
+          <div class="summary-header">
+            <p class="eyebrow" data-i18n="payments.pending">⏳ Pending Settlement</p>
+            <strong>₹18,450</strong>
+          </div>
+          <small data-i18n="payments.nextCycle">Settlement on 30 Aug</small>
+        </article>
+
+        <article class="summary-card">
+          <div class="summary-header">
+            <p class="eyebrow" data-i18n="payments.settled">✓ Settled Amount</p>
+            <strong>₹2,69,000</strong>
+          </div>
+          <small data-i18n="payments.transferred">Transferred to bank</small>
+        </article>
+
+        <article class="summary-card">
+          <div class="summary-header">
+            <p class="eyebrow" data-i18n="payments.avgPayment">📊 Average per delivery</p>
+            <strong>₹8,245</strong>
+          </div>
+          <small data-i18n="payments.basedOn">Based on 35 deliveries</small>
+        </article>
+      </section>
+
+      <!-- Filter & View Options -->
+      <section class="payment-filters">
+        <div class="filter-group">
+          <label for="payment-status" data-i18n="payments.filterBy">Filter by status</label>
+          <select id="payment-status">
+            <option value="all">All transactions</option>
+            <option value="settled">Settled</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="payment-date" data-i18n="payments.dateRange">Date range</label>
+          <input type="month" id="payment-date">
+        </div>
+
+        <button class="export-btn" data-i18n="payments.export">Download Statement</button>
+      </section>
+
+      <!-- Payment Details Table -->
+      <section class="payment-section">
+        <div class="section-header">
+          <h2 data-i18n="payments.recentTransactions">📊 Recent Transactions</h2>
+          <span class="transaction-count">35 total transactions</span>
+        </div>
+
+        <div class="payment-table-wrapper">
+          <table class="payment-table">
+            <thead>
+              <tr>
+                <th data-i18n="payments.date">Date</th>
+                <th data-i18n="payments.harvest">Harvest Details</th>
+                <th data-i18n="payments.amount">Amount</th>
+                <th data-i18n="payments.status">Status</th>
+                <th data-i18n="payments.action">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="settled-row">
+                <td>28 Aug 2026</td>
+                <td>
+                  <div class="harvest-info">
+                    <strong>Tomato</strong>
+                    <small>500 kg • Shivaji Nagar</small>
+                  </div>
+                </td>
+                <td class="amount">₹8,500</td>
+                <td><span class="badge settled">Settled</span></td>
+                <td><a href="#" data-i18n="payments.viewReceipt">View receipt</a></td>
+              </tr>
+              <tr class="settled-row">
+                <td>25 Aug 2026</td>
+                <td>
+                  <div class="harvest-info">
+                    <strong>Onion</strong>
+                    <small>400 kg • Indore Mandi</small>
+                  </div>
+                </td>
+                <td class="amount">₹7,200</td>
+                <td><span class="badge settled">Settled</span></td>
+                <td><a href="#" data-i18n="payments.viewReceipt">View receipt</a></td>
+              </tr>
+              <tr class="pending-row">
+                <td>22 Aug 2026</td>
+                <td>
+                  <div class="harvest-info">
+                    <strong>Wheat</strong>
+                    <small>700 kg • Ujjain Center</small>
+                  </div>
+                </td>
+                <td class="amount">₹9,800</td>
+                <td><span class="badge pending">Pending</span></td>
+                <td><a href="#" data-i18n="payments.viewDetails">View details</a></td>
+              </tr>
+              <tr class="settled-row">
+                <td>20 Aug 2026</td>
+                <td>
+                  <div class="harvest-info">
+                    <strong>Potato</strong>
+                    <small>600 kg • Dewas Mandi</small>
+                  </div>
+                </td>
+                <td class="amount">₹6,450</td>
+                <td><span class="badge settled">Settled</span></td>
+                <td><a href="#" data-i18n="payments.viewReceipt">View receipt</a></td>
+              </tr>
+              <tr class="processing-row">
+                <td>18 Aug 2026</td>
+                <td>
+                  <div class="harvest-info">
+                    <strong>Soybean</strong>
+                    <small>800 kg • Bhopal Center</small>
+                  </div>
+                </td>
+                <td class="amount">₹10,200</td>
+                <td><span class="badge processing">Processing</span></td>
+                <td><a href="#" data-i18n="payments.viewDetails">View details</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Payment Breakdown -->
+      <section class="payment-breakdown">
+        <article class="breakdown-panel">
+          <h3>💵 Payment Breakdown</h3>
+          <div class="breakdown-item">
+            <span data-i18n="payments.harvestValue">Harvest value</span>
+            <strong>₹42,150</strong>
+          </div>
+          <div class="breakdown-item">
+            <span data-i18n="payments.qualityBonus">Quality bonus (+)</span>
+            <strong class="positive">₹2,100</strong>
+          </div>
+          <div class="breakdown-item">
+            <span data-i18n="payments.processingFee">Processing fee (-)</span>
+            <strong class="negative">₹1,500</strong>
+          </div>
+          <div class="breakdown-item">
+            <span data-i18n="payments.taxes">Taxes & deductions (-)</span>
+            <strong class="negative">₹3,100</strong>
+          </div>
+          <div class="breakdown-divider"></div>
+          <div class="breakdown-item total">
+            <span data-i18n="payments.netPayable">Net payable</span>
+            <strong>₹39,650</strong>
+          </div>
+        </article>
+
+        <article class="breakdown-panel">
+          <h3>🏦 Bank Details</h3>
+          <div class="bank-info">
+            <div class="info-row">
+              <span data-i18n="payments.bankName">Bank name</span>
+              <strong>State Bank of India</strong>
+            </div>
+            <div class="info-row">
+              <span data-i18n="payments.accountNumber">Account number</span>
+              <strong>•••• •••• •••• 8945</strong>
+            </div>
+            <div class="info-row">
+              <span data-i18n="payments.accountHolder">Account holder</span>
+              <strong>Rajesh Yadav</strong>
+            </div>
+            <div class="info-row">
+              <span data-i18n="payments.ifscCode">IFSC code</span>
+              <strong>SBIN0001234</strong>
+            </div>
+            <button class="edit-bank-btn" data-i18n="payments.editDetails">✎ Edit bank details</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Settlement Schedule -->
+      <section class="settlement-schedule">
+        <h2>📅 Settlement Schedule</h2>
+        <div class="schedule-grid">
+          <article class="schedule-card">
+            <span class="schedule-cycle" data-i18n="payments.cycle">Cycle 1</span>
+            <div class="schedule-dates">
+              <small>1-10 Aug</small>
+              <strong>₹68,900</strong>
+            </div>
+            <span class="settled-badge">Settled 12 Aug</span>
+          </article>
+          <article class="schedule-card">
+            <span class="schedule-cycle" data-i18n="payments.cycle">Cycle 2</span>
+            <div class="schedule-dates">
+              <small>11-20 Aug</small>
+              <strong>₹75,450</strong>
+            </div>
+            <span class="settled-badge">Settled 22 Aug</span>
+          </article>
+          <article class="schedule-card active">
+            <span class="schedule-cycle" data-i18n="payments.cycle">Cycle 3</span>
+            <div class="schedule-dates">
+              <small>21-31 Aug</small>
+              <strong>₹18,450</strong>
+            </div>
+            <span class="pending-badge">Settling 30 Aug</span>
+          </article>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="payment-faq">
+        <h2>❓ Frequently Asked Questions</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary data-i18n="payments.faqPaymentTiming">When will my payment be settled?</summary>
+            <p data-i18n="payments.faqPaymentTimingAnswer">Payments are settled in cycles. Each cycle covers 10 days and is settled within 2 days of the cycle end date. You can track your payment status in the transactions section.</p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="payments.faqBankTransfer">How long does bank transfer take?</summary>
+            <p data-i18n="payments.faqBankTransferAnswer">Once settled, payments are transferred to your registered bank account within 24 hours. NEFT/RTGS ensures secure and fast transfer.</p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="payments.faqQualityBonus">How is the quality bonus calculated?</summary>
+            <p data-i18n="payments.faqQualityBonusAnswer">Quality bonus (0-5%) is based on your harvest quality assessment. Better quality produces higher bonuses up to ₹100 per 100kg.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
