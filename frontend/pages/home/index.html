@@ -21,9 +21,8 @@
     <a class="brand" href="index.html" aria-label="KisanSetu home"><span class="brand-mark"
         aria-hidden="true"><i></i><b></b></span><span>Kisan<span>Setu</span></span></a>
     <nav aria-label="Home navigation">
-      <a href="#how-it-works" data-i18n="nav.how">How it works</a>
-      <a href="#benefits" data-i18n="nav.farmers">For farmers</a>
-      <a href="#help" data-i18n="nav.help">Help</a>
+      <a href="#how-it-works-modal" data-i18n="nav.how">How it works</a>
+      <a href="#support-modal" data-i18n="nav.help">Help</a>
     </nav>
     <div class="header-actions">
       <div class="language-field">
@@ -65,8 +64,10 @@
         <p class="hero-text" data-i18n="hero.text">KisanSetu gives you a clear time slot, a live place in the queue, and
           updates from quality check to payment.</p>
         <div class="hero-actions"><a class="primary-button" href="../dashboard/index.html"
-            data-i18n="hero.cta.primary"><span>→</span></a><a class="quiet-link"
-            href="#how-it-works" data-i18n="hero.cta.secondary"><span>↓</span></a></div>
+            data-i18n="hero.cta.primary"><span class="button-label">Open farmer dashboard</span><span
+              class="button-arrow" aria-hidden="true">→</span></a><a class="quiet-link"
+            href="#how-it-works-modal" data-i18n="hero.cta.secondary"><span class="button-label">See how it works</span><span
+              class="button-arrow" aria-hidden="true">↓</span></a></div>
         <div class="trust-line"><span class="avatars"><i>R</i><i>S</i><i>M</i></span><span
             data-i18n="hero.trust">Trusted by 12,000+ farmers across Madhya Pradesh</span></div>
       </div>
@@ -114,14 +115,6 @@
       </div>
     </section>
 
-    <section class="bottom-cta" id="benefits">
-      <div>
-        <p class="eyebrow" data-i18n="cta.eyebrow">Your harvest. Your time.</p>
-        <h2 data-i18n="cta.title">Plan with confidence.</h2>
-        <p data-i18n="cta.text">Spend less time waiting and more time on your farm.</p>
-      </div>
-      <a class="primary-button light-button" href="../dashboard/index.html" data-i18n="cta.button"><span>→</span></a>
-    </section>
   </main>
   <footer id="help"><span>© 2026 KisanSetu</span><span data-i18n="footer.tag">Built for farmers, with care.</span><span
       data-i18n="footer.help">Help center · Privacy</span></footer>
@@ -166,6 +159,40 @@
           <button type="submit">Create account <span>→</span></button>
         </form>
       </div>
+    </div>
+  </section>
+
+  <section class="how-overlay" id="how-it-works-modal" aria-label="How KisanSetu works">
+    <a class="how-backdrop" href="#" aria-label="Close How It Works"></a>
+    <div class="how-modal">
+      <a class="close-how" href="#" aria-label="Close How It Works">×</a>
+      <p class="eyebrow" data-i18n="steps.eyebrow">A simpler harvest day</p>
+      <h2>How it works</h2>
+      <p class="how-modal-intro">From harvest to payment, every step stays clear.</p>
+      <div class="how-modal-steps">
+        <article><span>01</span><div><strong>Know your slot</strong><small>Choose a convenient delivery window.</small></div></article>
+        <article><span>02</span><div><strong>Get your token</strong><small>Receive your digital mandi token.</small></div></article>
+        <article><span>03</span><div><strong>Watch the live queue</strong><small>Track your place and arrival estimate.</small></div></article>
+        <article><span>04</span><div><strong>Complete quality check</strong><small>Follow inspection and procurement status.</small></div></article>
+        <article><span>05</span><div><strong>Receive payment</strong><small>Review your settlement and deductions.</small></div></article>
+      </div>
+      <a class="primary-button how-modal-action" href="../dashboard/index.html">Open farmer dashboard <span class="button-arrow" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <section class="support-overlay" id="support-modal" aria-label="Help line">
+    <a class="support-backdrop" href="#" aria-label="Close help line"></a>
+    <div class="support-modal">
+      <a class="support-close" href="#" aria-label="Close help line">×</a>
+      <p class="eyebrow" data-i18n="dashboard.support">Support</p>
+      <h2>Help line</h2>
+      <p class="support-modal-intro">Get help with queues, payments, accounts, and documents.</p>
+      <div class="support-modal-contact">
+        <a href="tel:9758155773"><span>Call us</span><strong>9758155773</strong></a>
+        <a href="mailto:panzer01052005@gmail.com"><span>Email us</span><strong>panzer01052005@gmail.com</strong></a>
+        <div><span>Visit us</span><strong>Invertis University, Bareilly</strong></div>
+      </div>
+      <a class="support-modal-button" href="../support/index.html">Open detailed help page <span class="button-arrow" aria-hidden="true">→</span></a>
     </div>
   </section>
 </body>

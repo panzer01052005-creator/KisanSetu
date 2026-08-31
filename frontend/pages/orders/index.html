@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Detailed KisanSetu order information.">
+  <title>Order Details | KisanSetu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/theme.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="orders-page">
+    <header class="orders-header">
+      <div>
+        <p class="eyebrow" data-i18n="dashboard.orders">Order tracking</p>
+        <h1>Order details</h1>
+        <p>Follow your harvest from submission to settlement.</p>
+      </div>
+      <div class="page-tools">
+        <select class="language-select" aria-label="Select language">
+          <option value="en">English</option><option value="as">অসমীয়া</option><option value="bn">বাংলা</option><option value="brx">बोड़ो</option><option value="doi">डोगरी</option><option value="gu">ગુજરાતી</option><option value="hi">हिन्दी</option><option value="ka">ಕನ್ನಡ</option><option value="ks">कश्मೀरी</option><option value="kok">कोंकणी</option><option value="mai">मैथिली</option><option value="ml">മലയാളം</option><option value="mni">মণিপুরি</option><option value="mr">मराठी</option><option value="ne">नेपाली</option><option value="or">ଓଡ଼ିଆ</option><option value="pa">ਪੰਜਾਬੀ</option><option value="sa">संस्कृत</option><option value="sat">संताली</option><option value="sd">سنڌي</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option><option value="ur">اردو</option>
+        </select>
+        <a class="back-link" href="../dashboard/index.html">← Back to dashboard</a>
+      </div>
+    </header>
+
+    <section class="orders-panel" aria-labelledby="order-title">
+      <header class="order-summary">
+        <div>
+          <h2 id="order-title">Tomato delivery</h2>
+          <p>Order KS-2026-0828 · Rajesh Yadav</p>
+        </div>
+        <span class="order-status">In progress</span>
+      </header>
+
+      <div class="orders-content">
+        <section class="orders-section" aria-labelledby="summary-title">
+          <h3 id="summary-title">Order summary</h3>
+          <div class="order-grid">
+            <div class="order-item"><label>Crop</label><strong>Tomato</strong></div>
+            <div class="order-item"><label>Quantity</label><strong>500 kg</strong></div>
+            <div class="order-item"><label>Procurement center</label><strong>Shivaji Nagar Mandi</strong></div>
+            <div class="order-item"><label>Delivery slot</label><strong>11:30 AM</strong></div>
+            <div class="order-item"><label>Queue token</label><strong>KT-2841</strong></div>
+            <div class="order-item"><label>Payment</label><strong>Pending inspection</strong></div>
+          </div>
+        </section>
+
+        <section class="orders-section" aria-labelledby="progress-title">
+          <h3 id="progress-title">Order progress</h3>
+          <div class="timeline">
+            <div class="timeline-item complete"><span class="timeline-dot"></span><div><strong>Harvest submitted</strong><small>Details received and token created</small></div><time>8:30 AM</time></div>
+            <div class="timeline-item complete"><span class="timeline-dot"></span><div><strong>Queue slot confirmed</strong><small>Arrival expected in 35 minutes</small></div><time>9:00 AM</time></div>
+            <div class="timeline-item"><span class="timeline-dot"></span><div><strong>Quality inspection</strong><small>Inspection begins at the center</small></div><time>Next</time></div>
+            <div class="timeline-item"><span class="timeline-dot"></span><div><strong>Payment settlement</strong><small>Payment follows successful inspection</small></div><time>Pending</time></div>
+          </div>
+        </section>
+
+        <div class="order-actions">
+          <a class="secondary-action" href="../Queue/queue-details.html">View queue</a>
+          <a class="primary-action" href="../payments/details.html">View payments</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="../../assets/site.js" defer></script>
+</body>
+</html>

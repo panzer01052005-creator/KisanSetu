@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../../assets/theme.css">
   <script src="../../assets/site.js" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -69,23 +70,23 @@
 
       <nav class="side-nav" aria-label="Dashboard navigation">
         <a class="active" href="#overview" data-i18n="dashboard.overview">Overview</a>
-        <a href="../Queue/Queue.html">Queue Status</a>
-        <a href="#orders" data-i18n="dashboard.orders">Orders</a>
-        <a href="../payments/index.html" data-i18n="dashboard.payments">Payments</a>
-        <a href="#support" data-i18n="dashboard.support">Support</a>
+        <a href="../Queue/queue-details.html">Queue Status</a>
+        <a href="../orders/index.html" data-i18n="dashboard.orders">Orders</a>
+        <a href="../payments/details.html" data-i18n="dashboard.payments">Payments</a>
+        <a href="#support-modal" data-i18n="dashboard.support">Support</a>
       </nav>
 
-      <div class="profile-card">
+      <a class="profile-card" href="../Account/account-details.html" aria-label="Open detailed account page">
         <p >Account</p>
         <h3 data-i18n="dashboard.farmerProfile">Farmer Profile</h3>
         <div class="profile-meta">
-          <a href="../Account/account.html"> <span class="avatar">R</span></a>
+          <span class="avatar">R</span>
           <div>
             <strong id="user-full-name">Rajesh Yadav</strong>
             <small>Seller</small>
           </div>
         </div>
-      </div>
+      </a>
     </aside>
 
     <main class="dashboard-main">
@@ -152,7 +153,10 @@
               <p class="eyebrow" data-i18n="dashboard.liveUpdates">Live updates</p>
               <h2 data-i18n="dashboard.queueTracking">Queue tracking</h2>
             </div>
-            <span class="pill success">Live</span>
+            <div class="panel-header-actions">
+              <span class="pill success">Live</span>
+              <a class="panel-link" href="../Queue/queue-details.html">View details <span aria-hidden="true">→</span></a>
+            </div>
           </div>
 
           <div class="queue-list">
@@ -189,6 +193,7 @@
               <p class="eyebrow" data-i18n="dashboard.orders">Orders</p>
               <h2 data-i18n="dashboard.recentActivity">Recent activity</h2>
             </div>
+            <a class="panel-link" href="../orders/index.html">View details <span aria-hidden="true">→</span></a>
           </div>
 
           <ul class="feed-list">
@@ -222,6 +227,7 @@
               <p class="eyebrow" data-i18n="dashboard.payments">Payment</p>
               <h2 data-i18n="dashboard.settlement">Settlement</h2>
             </div>
+            <a class="panel-link" href="../payments/details.html">View details <span aria-hidden="true">→</span></a>
           </div>
 
           <div class="payment-box">
@@ -236,16 +242,17 @@
               <p class="eyebrow" data-i18n="dashboard.support">Support</p>
               <h2 data-i18n="dashboard.farmAssistance">Farm assistance</h2>
             </div>
+            <a class="panel-link" href="#support-modal">View help line <span aria-hidden="true">→</span></a>
           </div>
 
           <div class="support-row">
-            <div class="support-item">
+            <a class="support-item" href="#support-modal">
               <span class="icon">☎</span>
               <div>
                 <strong data-i18n="dashboard.helpLine">Help line</strong>
                 <small>Call support</small>
               </div>
-            </div>
+            </a>
             <div class="support-item">
               <span class="icon">▣</span>
               <div>
@@ -265,5 +272,21 @@
       </section>
     </main>
   </div>
+
+  <section class="support-overlay" id="support-modal" aria-label="Help line">
+    <a class="support-backdrop" href="#" aria-label="Close help line"></a>
+    <div class="support-modal">
+      <a class="support-close" href="#" aria-label="Close help line">×</a>
+      <p class="eyebrow">Support</p>
+      <h2>Help line</h2>
+      <p class="support-modal-intro">Get help with queues, payments, accounts, and documents.</p>
+      <div class="support-modal-contact">
+        <a href="tel:9758155773"><span>Call us</span><strong>9758155773</strong></a>
+        <a href="mailto:panzer01052005@gmail.com"><span>Email us</span><strong>panzer01052005@gmail.com</strong></a>
+        <div><span>Visit us</span><strong>Invertis University, Bareilly</strong></div>
+      </div>
+      <a class="support-modal-button" href="../support/index.html">Open detailed help page <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
 </body>
 </html>

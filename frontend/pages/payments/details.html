@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Detailed KisanSetu payment information.">
+  <title>Payment Details | KisanSetu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/theme.css">
+  <link rel="stylesheet" href="details.css">
+</head>
+<body>
+  <main class="payment-details-page">
+    <header class="payment-details-header">
+      <div>
+        <p class="eyebrow" data-i18n="dashboard.payments">Payments</p>
+        <h1>Payment details</h1>
+        <p>Review your latest settlement and payment breakdown.</p>
+      </div>
+      <div class="page-tools">
+        <select class="language-select" aria-label="Select language">
+          <option value="en">English</option><option value="as">অসমীয়া</option><option value="bn">বাংলা</option><option value="brx">बोड़ো</option><option value="doi">डোগરી</option><option value="gu">ગુજરાતી</option><option value="hi">हिन्दी</option><option value="ka">ಕನ್ನಡ</option><option value="ks">कश्मೀरी</option><option value="kok">कोंकणी</option><option value="mai">मैथिली</option><option value="ml">മലയാളം</option><option value="mni">মণिपুরি</option><option value="mr">मराठी</option><option value="ne">नेपाली</option><option value="or">ଓଡ଼ିଆ</option><option value="pa">ਪੰਜਾਬੀ</option><option value="sa">संस्कृत</option><option value="sat">संताली</option><option value="sd">سنڌي</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option><option value="ur">اردو</option>
+        </select>
+        <a class="back-link" href="../dashboard/index.html">← Back to dashboard</a>
+      </div>
+    </header>
+
+    <section class="payment-panel" aria-labelledby="payment-title">
+      <header class="payment-hero">
+        <div>
+          <h2 id="payment-title">Tomato delivery settlement</h2>
+          <p>Payment reference KT-2841 · 28 Aug 2026</p>
+        </div>
+        <span class="payment-state">Pending</span>
+      </header>
+
+      <div class="payment-content">
+        <section class="payment-section" aria-labelledby="summary-title">
+          <h3 id="summary-title">Payment summary</h3>
+          <div class="payment-grid">
+            <div class="payment-item"><label>Farmer</label><strong>Rajesh Yadav</strong></div>
+            <div class="payment-item"><label>Crop and quantity</label><strong>Tomato · 500 kg</strong></div>
+            <div class="payment-item"><label>Procurement center</label><strong>Shivaji Nagar Mandi</strong></div>
+            <div class="payment-item"><label>Payment method</label><strong>State Bank of India · 8945</strong></div>
+            <div class="payment-item amount"><label>Estimated gross amount</label><strong>₹42,150</strong></div>
+            <div class="payment-item"><label>Settlement date</label><strong>30 Aug 2026</strong></div>
+          </div>
+        </section>
+
+        <section class="payment-section" aria-labelledby="breakdown-title">
+          <h3 id="breakdown-title">Amount breakdown</h3>
+          <div class="breakdown">
+            <div class="breakdown-row"><span>Harvest value</span><strong>₹42,150</strong></div>
+            <div class="breakdown-row"><span>Quality bonus</span><strong class="positive">+ ₹2,100</strong></div>
+            <div class="breakdown-row"><span>Processing fee</span><strong class="negative">- ₹1,500</strong></div>
+            <div class="breakdown-row"><span>Taxes and deductions</span><strong class="negative">- ₹3,100</strong></div>
+            <div class="breakdown-row total"><span>Net payable</span><strong>₹39,650</strong></div>
+          </div>
+          <p class="payment-note">Your settlement will be transferred after the quality inspection is completed.</p>
+        </section>
+
+        <div class="payment-actions">
+          <a class="secondary-action" href="../orders/index.html">View order</a>
+          <a class="primary-action" href="../dashboard/index.html">Back to dashboard</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="../../assets/site.js" defer></script>
+</body>
+</html>

@@ -32,11 +32,19 @@ footer {
 }
 
 .home-header {
-    height: 78px;
+    position: sticky;
+    top: 14px;
+    z-index: 10;
+    height: 62px;
     display: flex;
     align-items: center;
     gap: 18px;
-    border-bottom: 1px solid var(--line);
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: rgba(247, 248, 244, 0.92);
+    box-shadow: 0 10px 24px rgba(39, 53, 47, 0.07);
+    backdrop-filter: blur(12px);
 }
 
 .brand {
@@ -45,6 +53,11 @@ footer {
     gap: 10px;
     flex-shrink: 0;
     font: 700 21px 'Space Grotesk', sans-serif;
+    letter-spacing: -0.4px;
+}
+
+.brand:hover .brand-mark {
+    transform: rotate(-5deg) scale(1.04);
 }
 
 .brand>span:last-child span {
@@ -58,6 +71,8 @@ footer {
     height: 35px;
     border-radius: 10px;
     background: var(--green);
+    box-shadow: 0 5px 12px rgba(23, 107, 69, 0.2);
+    transition: transform .2s ease;
 }
 
 .brand-mark:after {
@@ -97,11 +112,44 @@ footer {
 .home-header nav {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 5px;
     margin-left: 0;
     color: var(--muted);
     font-size: 13px;
     white-space: nowrap;
+}
+
+.home-header nav a {
+    position: relative;
+    padding: 8px 11px;
+    border-radius: 6px;
+    transition: color .2s ease, background .2s ease;
+}
+
+.home-header nav a::after {
+    content: '';
+    position: absolute;
+    right: 11px;
+    bottom: 4px;
+    left: 11px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform .2s ease;
+}
+
+.home-header nav a:hover,
+.home-header nav a:focus-visible {
+    color: var(--green);
+    background: #edf4e9;
+}
+
+.home-header nav a:hover::after,
+.home-header nav a:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left;
 }
 
 .header-actions {
@@ -127,15 +175,34 @@ footer {
     color: var(--ink);
     font: 700 11px 'DM Sans', sans-serif;
     cursor: pointer;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.language-select:hover,
+.language-select:focus-visible {
+    border-color: var(--green);
+    outline: none;
+    box-shadow: 0 0 0 3px #176b4514;
 }
 
 .header-login {
+    display: inline-flex;
+    align-items: center;
     padding: 10px 14px;
     border: 1px solid #cfded0;
     border-radius: 6px;
     color: var(--green);
     font-size: 12px;
     font-weight: 700;
+    transition: color .2s ease, background .2s ease, transform .2s ease;
+}
+
+.header-login:hover,
+.header-login:focus-visible {
+    color: #fff;
+    background: var(--green);
+    transform: translateY(-1px);
+    outline: none;
 }
 
 .header-login span {
@@ -197,29 +264,40 @@ footer {
 .primary-button {
     display: inline-flex;
     align-items: center;
-    gap: 13px;
-    padding: 13px 18px;
+    justify-content: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 12px 16px;
     border-radius: 6px;
     color: #fff;
     background: var(--green);
     font-size: 12px;
     font-weight: 700;
     box-shadow: 0 8px 18px #176b4526;
+    white-space: nowrap;
 }
 
-.primary-button span {
+.button-label {
+    min-width: 0;
+}
+
+.button-arrow {
+    flex: 0 0 auto;
     font-size: 18px;
-    line-height: 10px;
+    line-height: 1;
 }
 
 .quiet-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
     color: var(--green);
     font-size: 12px;
     font-weight: 700;
+    white-space: nowrap;
 }
 
-.quiet-link span {
-    margin-left: 7px;
+.quiet-link .button-arrow {
     font-size: 16px;
 }
 
@@ -583,6 +661,23 @@ footer {
     box-shadow: none;
 }
 
+@media (max-width: 390px) {
+    .hero-actions {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .primary-button,
+    .quiet-link {
+        width: 100%;
+    }
+
+    .quiet-link {
+        justify-content: center;
+    }
+}
+
 footer {
     display: flex;
     justify-content: space-between;
@@ -600,7 +695,9 @@ footer {
     }
 
     .home-header {
-        height: 66px;
+        top: 8px;
+        height: 62px;
+        padding: 0 10px;
     }
 
     .home-header nav {
@@ -730,6 +827,200 @@ footer {
     padding: 20px;
     background: rgba(17, 31, 24, 0.38);
     backdrop-filter: blur(2px);
+}
+
+.how-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 19;
+    display: none;
+    place-items: center;
+    padding: 20px;
+    background: rgba(39, 53, 47, 0.18);
+}
+
+.how-overlay:target {
+    display: grid;
+}
+
+.how-backdrop {
+    position: absolute;
+    inset: 0;
+}
+
+.how-modal {
+    position: relative;
+    width: min(440px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--cream);
+    box-shadow: 0 20px 50px rgba(39, 53, 47, 0.2);
+}
+
+.close-how {
+    position: absolute;
+    top: 14px;
+    right: 17px;
+    color: var(--muted);
+    font-size: 24px;
+    line-height: 1;
+}
+
+.how-modal h2 {
+    margin: 0;
+    font: 600 28px/1.1 'Space Grotesk', sans-serif;
+}
+
+.how-modal-intro {
+    margin: 7px 0 17px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.how-modal-steps {
+    display: grid;
+    gap: 7px;
+}
+
+.how-modal-steps article {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 9px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #fbfcf9;
+}
+
+.how-modal-steps article > span {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    color: #fff;
+    background: var(--green);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.how-modal-steps strong,
+.how-modal-steps small {
+    display: block;
+}
+
+.how-modal-steps strong {
+    font-size: 12px;
+}
+
+.how-modal-steps small {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.how-modal-action {
+    width: 100%;
+    margin-top: 16px;
+}
+
+.support-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 19;
+    display: none;
+    place-items: center;
+    padding: 20px;
+    background: rgba(17, 31, 24, 0.38);
+    backdrop-filter: blur(2px);
+}
+
+.support-overlay:target {
+    display: grid;
+}
+
+.support-backdrop {
+    position: absolute;
+    inset: 0;
+}
+
+.support-modal {
+    position: relative;
+    width: min(360px, calc(100% - 20px));
+    padding: 22px 20px 18px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, .97);
+    box-shadow: 0 18px 45px rgba(23, 36, 28, .2);
+}
+
+.support-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    color: var(--muted);
+    font-size: 22px;
+    line-height: 1;
+}
+
+.support-modal h2 {
+    margin: 0 0 6px;
+    font: 600 26px 'Space Grotesk', sans-serif;
+}
+
+.support-modal-intro {
+    margin: 0 0 14px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.support-modal-contact {
+    display: grid;
+    gap: 7px;
+}
+
+.support-modal-contact a,
+.support-modal-contact div {
+    display: block;
+    padding: 10px 11px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #fbfcf9;
+}
+
+.support-modal-contact span,
+.support-modal-contact strong {
+    display: block;
+}
+
+.support-modal-contact span {
+    margin-bottom: 3px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.support-modal-contact strong {
+    color: var(--green);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.support-modal-button {
+    display: block;
+    margin-top: 14px;
+    padding: 10px;
+    border-radius: 6px;
+    color: #fff;
+    background: var(--green);
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
 }
 
 .login-overlay:target {
@@ -906,4 +1197,18 @@ footer {
 
 .compact-form button span {
     font-size: 15px;
+}
+
+@media (min-width: 761px) {
+    .home-header,
+    main,
+    footer {
+        width: 100%;
+        padding-right: clamp(28px, 5vw, 80px);
+        padding-left: clamp(28px, 5vw, 80px);
+    }
+
+    .hero {
+        min-height: calc(100vh - 90px);
+    }
 }

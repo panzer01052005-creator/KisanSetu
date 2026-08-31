@@ -287,6 +287,24 @@ body {
     margin-bottom: 18px;
 }
 
+.panel-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.panel-link {
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.panel-link span {
+    margin-left: 4px;
+    font-size: 1rem;
+}
+
 .panel-header h2 {
     margin: 0;
     font-size: 1.4rem;
@@ -431,6 +449,17 @@ body {
     border: 1px solid var(--border);
 }
 
+a.support-item {
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+a.support-item:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
 .support-item .icon {
     width: 42px;
     height: 42px;
@@ -450,6 +479,106 @@ body {
 .support-item small {
     color: var(--muted);
     margin-top: 4px;
+}
+
+.support-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: none;
+    place-items: center;
+    padding: 20px;
+    background: rgba(17, 31, 24, 0.38);
+    backdrop-filter: blur(2px);
+}
+
+.support-overlay:target {
+    display: grid;
+}
+
+.support-backdrop {
+    position: absolute;
+    inset: 0;
+}
+
+.support-modal {
+    position: relative;
+    width: min(360px, calc(100% - 20px));
+    padding: 22px 20px 18px;
+    border: 1px solid #dfe8df;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 18px 45px rgba(23, 36, 28, 0.2);
+}
+
+.support-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    color: var(--muted);
+    font-size: 22px;
+    line-height: 1;
+}
+
+.support-modal h2 {
+    margin: 0 0 6px;
+    font: 600 26px 'Space Grotesk', sans-serif;
+}
+
+.support-modal-intro {
+    margin: 0 0 14px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.support-modal-contact {
+    display: grid;
+    gap: 7px;
+}
+
+.support-modal-contact a,
+.support-modal-contact div {
+    display: block;
+    padding: 10px 11px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fbfcf9;
+}
+
+.support-modal-contact a:hover {
+    border-color: var(--primary);
+}
+
+.support-modal-contact span,
+.support-modal-contact strong {
+    display: block;
+}
+
+.support-modal-contact span {
+    margin-bottom: 3px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.support-modal-contact strong {
+    color: var(--primary);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.support-modal-button {
+    display: block;
+    margin-top: 14px;
+    padding: 10px;
+    border-radius: 6px;
+    color: #fff;
+    background: var(--primary);
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
 }
 
 @media (max-width: 980px) {
@@ -494,5 +623,55 @@ body {
     .stats-grid,
     .support-row {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Queue panel sizing */
+#queue {
+    min-width: 0;
+}
+
+#queue .panel-header > div:first-child {
+    min-width: 0;
+}
+
+#queue .panel-header h2 {
+    overflow-wrap: anywhere;
+}
+
+#queue .queue-item {
+    min-width: 0;
+    grid-template-columns: minmax(42px, 72px) minmax(0, 1fr) auto;
+    gap: clamp(8px, 1.5vw, 12px);
+    padding: clamp(10px, 1.5vw, 14px) clamp(10px, 2vw, 16px);
+}
+
+#queue .queue-item > div {
+    min-width: 0;
+}
+
+#queue .queue-item strong,
+#queue .queue-item small {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 420px) {
+    #queue .panel-header {
+        align-items: flex-start;
+    }
+
+    #queue .panel-header-actions {
+        align-items: flex-end;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    #queue .queue-item {
+        grid-template-columns: 42px minmax(0, 1fr);
+    }
+
+    #queue .queue-time {
+        grid-column: 2;
+        margin-top: 2px;
     }
 }
