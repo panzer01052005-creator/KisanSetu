@@ -3,6 +3,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const { createCropRepository } = require('./crop-repository')
 const { createDatabase } = require('./database')
+const { createAuthRepository } = require('./auth-repository')
 
 const frontendRoot = path.resolve(__dirname, '..', 'frontend')
 const port = Number(process.env.PORT) || 3000
@@ -11,6 +12,7 @@ if (process.env.NODE_ENV === 'production' && !database && process.env.ALLOW_MEMO
     throw new Error('DATABASE_URL is required in production. Set ALLOW_MEMORY_STORAGE=true only for temporary testing.')
 }
 const cropRepository = createCropRepository(database || undefined)
+const authRepository = createAuthRepository(database || undefined)
 const contentTypes = {
     '.css': 'text/css; charset=utf-8',
     '.html': 'text/html; charset=utf-8',
@@ -42,6 +44,17 @@ const readJsonBody = (request) => new Promise((resolve, reject) => {
     request.on('error', reject)
 })
 
+const parseCookies = (request) => Object.fromEntries((request.headers.cookie || '').split(';').filter(Boolean).map((cookie) => {
+    const [name, ...value] = cookie.trim().split('=')
+    return [name, decodeURIComponent(value.join('='))]
+}))
+
+const validateAuthInput = (body, isSignup) => {
+    if (isSignup && (!String(body.fullName || '').trim() || !String(body.mobile || '').trim())) return 'Full name and mobile number are required.'
+    if (!String(body.mobile || '').trim() || String(body.password || '').length < 6) return 'Mobile/email and a password of at least 6 characters are required.'
+    return null
+}
+
 const validateCropRegistration = (body) => {
     const crop = body.crop === 'Other' ? String(body.otherCrop || '').trim() : String(body.crop || '').trim()
     const quantity = Number(body.quantity)
@@ -68,6 +81,46 @@ const handleApiRequest = async (request, response) => {
         } catch {
             sendJson(response, 503, { status: 'error', database: 'unavailable' })
         }
+        return true
+    }
+    if (request.method === 'POST' && ['/api/auth/register', '/api/auth/login'].includes(request.url.split('?')[0])) {
+        try {
+            const body = await readJsonBody(request)
+            const isSignup = request.url.split('?')[0].endsWith('/register')
+            const validationError = validateAuthInput(body, isSignup)
+            if (validationError) {
+                sendJson(response, 400, { error: validationError })
+                return true
+            }
+            let user
+            if (isSignup) {
+                user = await authRepository.createUser({
+                    fullName: String(body.fullName).trim(), email: String(body.email || '').trim(), mobile: String(body.mobile).trim(),
+                    password: String(body.password), role: ['seller', 'buyer'].includes(body.role) ? body.role : 'seller', language: String(body.language || 'en'),
+                })
+            } else {
+                user = await authRepository.findByLogin(String(body.mobile).trim())
+                if (!user || !(await authRepository.passwordMatches(String(body.password), user))) {
+                    sendJson(response, 401, { error: 'Incorrect login details.' })
+                    return true
+                }
+            }
+            const token = authRepository.createSession(user)
+            response.writeHead(200, {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Cache-Control': 'no-store',
+                'Set-Cookie': `kisansetu_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=86400${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`,
+            })
+            response.end(JSON.stringify({ message: isSignup ? 'Account created.' : 'Login successful.', user: { id: user.id, fullName: user.fullName, role: user.role } }))
+        } catch (error) {
+            const duplicate = error.code === '23505'
+            sendJson(response, duplicate ? 409 : 400, { error: duplicate ? 'That mobile number or email is already registered.' : error.message })
+        }
+        return true
+    }
+    if (request.method === 'POST' && request.url.split('?')[0] === '/api/auth/logout') {
+        response.writeHead(204, { 'Set-Cookie': 'kisansetu_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0' })
+        response.end()
         return true
     }
     if (request.method !== 'POST' || request.url.split('?')[0] !== '/api/crop-registrations') return false

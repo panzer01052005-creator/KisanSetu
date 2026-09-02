@@ -422,10 +422,27 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     document.querySelectorAll('form').forEach((form) => {
-        form.addEventListener('submit', (event) => {
-            if (form.closest('.login-modal, .login-card')) {
-                event.preventDefault()
-                showToast('Thanks. We will verify your details shortly.')
+        form.addEventListener('submit', async (event) => {
+            if (!form.classList.contains('auth-api-form')) return
+            event.preventDefault()
+            const submitButton = form.querySelector('button[type="submit"]')
+            const action = form.dataset.authAction
+            const originalText = submitButton.textContent
+            submitButton.disabled = true
+            submitButton.textContent = action === 'register' ? 'Creating account...' : 'Signing in...'
+            try {
+                const response = await fetch(`/api/auth/${action}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Object.fromEntries(new FormData(form))),
+                })
+                const result = await response.json()
+                if (!response.ok) throw new Error(result.error || 'Unable to continue.')
+                window.location.href = form.getAttribute('action') || '../dashboard/index.html'
+            } catch (error) {
+                showToast(error.message)
+                submitButton.disabled = false
+                submitButton.textContent = originalText
             }
         })
     })

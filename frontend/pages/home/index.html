@@ -132,7 +132,8 @@
       </div>
 
       <div class="auth-panel active" id="login-panel" role="tabpanel" aria-label="Login form">
-        <form class="login-form compact-form" action="../dashboard/index.html" method="get">
+        <form class="login-form compact-form auth-api-form" data-auth-action="login" action="../dashboard/index.html" method="get">
+          <input type="hidden" name="role" value="seller">
           <label for="home-login">Mobile or email</label>
           <input id="home-login" name="mobile" type="text" placeholder="Enter mobile or email" required>
           <label for="home-password">Password</label>
@@ -147,7 +148,8 @@
           <button class="role-btn" type="button" data-role="buyer">Buyer</button>
         </div>
 
-        <form class="login-form compact-form" action="../dashboard/index.html" method="get">
+        <form class="login-form compact-form auth-api-form" data-auth-action="register" action="../dashboard/index.html" method="get">
+          <input type="hidden" name="role" value="seller">
           <label for="signup-name">Full name</label>
           <input id="signup-name" name="fullName" type="text" placeholder="Enter your full name" required>
           <label for="signup-email">Email</label>

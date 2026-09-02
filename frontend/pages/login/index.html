@@ -92,7 +92,7 @@ value="ur">اردو</option>
           </select>
         </div>
 
-        <form class="login-form" action="../dashboard/index.html" method="get">
+        <form class="login-form auth-api-form" data-auth-action="login" action="../dashboard/index.html" method="get">
           <input type="hidden" name="role" value="seller">
           <label for="mobile" data-i18n="auth.mobile">Mobile number or email</label>
           <input id="mobile" name="mobile" type="text" placeholder="Enter mobile number or email" data-i18n-placeholder="auth.mobilePlaceholder" required>
@@ -139,7 +139,7 @@ value="ur">اردو</option>
           </select>
         </div>
 
-        <form class="login-form signup-form" action="../dashboard/index.html" method="get">
+        <form class="login-form signup-form auth-api-form" data-auth-action="register" action="../dashboard/index.html" method="get">
           <input type="hidden" name="role" value="seller">
           <label for="full-name" data-i18n="auth.fullName">Full name</label>
           <input id="full-name" name="fullName" type="text" placeholder="Enter your full name" data-i18n-placeholder="auth.fullNamePlaceholder" required>
