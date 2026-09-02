@@ -1,53 +1,31 @@
-const http = require('node:http')
-const fs = require('node:fs')
+const express = require('express')
 const path = require('node:path')
 const { createCropRepository } = require('./crop-repository')
 const { createDatabase } = require('./database')
 const { createAuthRepository } = require('./auth-repository')
 
+const app = express()
 const frontendRoot = path.resolve(__dirname, '..', 'frontend')
 const port = Number(process.env.PORT) || 3000
 const database = createDatabase()
+
 if (process.env.NODE_ENV === 'production' && !database && process.env.ALLOW_MEMORY_STORAGE !== 'true') {
     throw new Error('DATABASE_URL is required in production. Set ALLOW_MEMORY_STORAGE=true only for temporary testing.')
 }
+
 const cropRepository = createCropRepository(database || undefined)
 const authRepository = createAuthRepository(database || undefined)
-const contentTypes = {
-    '.css': 'text/css; charset=utf-8',
-    '.html': 'text/html; charset=utf-8',
-    '.js': 'text/javascript; charset=utf-8',
-    '.svg': 'image/svg+xml',
-}
 
-const sendJson = (response, statusCode, payload) => {
-    response.writeHead(statusCode, {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Cache-Control': 'no-store',
+app.disable('x-powered-by')
+app.use(express.json({ limit: '1mb' }))
+app.use((request, response, next) => {
+    response.set({
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'SAMEORIGIN',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
     })
-    response.end(JSON.stringify(payload))
-}
-
-const readJsonBody = (request) => new Promise((resolve, reject) => {
-    let body = ''
-    request.on('data', (chunk) => {
-        body += chunk
-        if (body.length > 1024 * 1024) reject(new Error('Request body is too large'))
-    })
-    request.on('end', () => {
-        try {
-            resolve(JSON.parse(body || '{}'))
-        } catch {
-            reject(new Error('Request body must be valid JSON'))
-        }
-    })
-    request.on('error', reject)
+    next()
 })
-
-const parseCookies = (request) => Object.fromEntries((request.headers.cookie || '').split(';').filter(Boolean).map((cookie) => {
-    const [name, ...value] = cookie.trim().split('=')
-    return [name, decodeURIComponent(value.join('='))]
-}))
 
 const validateAuthInput = (body, isSignup) => {
     if (isSignup && (!String(body.fullName || '').trim() || !String(body.mobile || '').trim())) return 'Full name and mobile number are required.'
@@ -69,119 +47,76 @@ const validateCropRegistration = (body) => {
     return null
 }
 
-const handleApiRequest = async (request, response) => {
-    if (request.method === 'GET' && request.url.split('?')[0] === '/api/health') {
-        if (!database) {
-            sendJson(response, 200, { status: 'ok', database: 'memory', message: 'Set DATABASE_URL to enable PostgreSQL.' })
-            return true
-        }
-        try {
-            await database.query('SELECT 1')
-            sendJson(response, 200, { status: 'ok', database: 'postgresql' })
-        } catch {
-            sendJson(response, 503, { status: 'error', database: 'unavailable' })
-        }
-        return true
-    }
-    if (request.method === 'POST' && ['/api/auth/register', '/api/auth/login'].includes(request.url.split('?')[0])) {
-        try {
-            const body = await readJsonBody(request)
-            const isSignup = request.url.split('?')[0].endsWith('/register')
-            const validationError = validateAuthInput(body, isSignup)
-            if (validationError) {
-                sendJson(response, 400, { error: validationError })
-                return true
-            }
-            let user
-            if (isSignup) {
-                user = await authRepository.createUser({
-                    fullName: String(body.fullName).trim(), email: String(body.email || '').trim(), mobile: String(body.mobile).trim(),
-                    password: String(body.password), role: ['seller', 'buyer'].includes(body.role) ? body.role : 'seller', language: String(body.language || 'en'),
-                })
-            } else {
-                user = await authRepository.findByLogin(String(body.mobile).trim())
-                if (!user || !(await authRepository.passwordMatches(String(body.password), user))) {
-                    sendJson(response, 401, { error: 'Incorrect login details.' })
-                    return true
-                }
-            }
-            const token = authRepository.createSession(user)
-            response.writeHead(200, {
-                'Content-Type': 'application/json; charset=utf-8',
-                'Cache-Control': 'no-store',
-                'Set-Cookie': `kisansetu_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=86400${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`,
-            })
-            response.end(JSON.stringify({ message: isSignup ? 'Account created.' : 'Login successful.', user: { id: user.id, fullName: user.fullName, role: user.role } }))
-        } catch (error) {
-            const duplicate = error.code === '23505'
-            sendJson(response, duplicate ? 409 : 400, { error: duplicate ? 'That mobile number or email is already registered.' : error.message })
-        }
-        return true
-    }
-    if (request.method === 'POST' && request.url.split('?')[0] === '/api/auth/logout') {
-        response.writeHead(204, { 'Set-Cookie': 'kisansetu_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0' })
-        response.end()
-        return true
-    }
-    if (request.method !== 'POST' || request.url.split('?')[0] !== '/api/crop-registrations') return false
-
+app.get('/api/health', async (request, response) => {
+    if (!database) return response.json({ status: 'ok', database: 'memory', message: 'Set DATABASE_URL to enable PostgreSQL.' })
     try {
-        const body = await readJsonBody(request)
-        const validationError = validateCropRegistration(body)
-        if (validationError) {
-            sendJson(response, 400, { error: validationError })
-            return true
-        }
-
-        const registration = await cropRepository.create({
-            crop: body.crop === 'Other' ? String(body.otherCrop).trim() : String(body.crop).trim(),
-            quantity: Number(body.quantity),
-            unit: String(body.unit),
-            center: String(body.center).trim(),
-            address: String(body.address).trim(),
-            district: String(body.district).trim(),
-            pincode: String(body.pincode),
-        })
-        sendJson(response, 201, { message: 'Crop registration received.', registration })
-    } catch (error) {
-        sendJson(response, 400, { error: error.message || 'Unable to save crop registration.' })
+        await database.query('SELECT 1')
+        response.json({ status: 'ok', database: 'postgresql' })
+    } catch {
+        response.status(503).json({ status: 'error', database: 'unavailable' })
     }
-    return true
-}
-
-const server = http.createServer(async (request, response) => {
-    if (await handleApiRequest(request, response)) return
-    const requestPath = decodeURIComponent(request.url.split('?')[0])
-    const relativePath = requestPath === '/' ? 'index.html' : requestPath.slice(1)
-    const filePath = path.resolve(frontendRoot, relativePath)
-
-    if (!filePath.startsWith(`${frontendRoot}${path.sep}`)) {
-        response.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' })
-        response.end('Forbidden')
-        return
-    }
-
-    fs.stat(filePath, (statError, stats) => {
-        const resolvedPath = !statError && stats.isDirectory() ? path.join(filePath, 'index.html') : filePath
-        fs.readFile(resolvedPath, (readError, content) => {
-            if (readError) {
-                response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' })
-                response.end('Not found')
-                return
-            }
-
-            response.writeHead(200, {
-                'Content-Type': contentTypes[path.extname(resolvedPath)] || 'application/octet-stream',
-                'X-Content-Type-Options': 'nosniff',
-                'X-Frame-Options': 'SAMEORIGIN',
-                'Referrer-Policy': 'strict-origin-when-cross-origin',
-            })
-            response.end(content)
-        })
-    })
 })
 
-server.listen(port, () => {
+app.post('/api/auth/register', async (request, response) => {
+    const body = request.body
+    const validationError = validateAuthInput(body, true)
+    if (validationError) return response.status(400).json({ error: validationError })
+    try {
+        const user = await authRepository.createUser({
+            fullName: String(body.fullName).trim(), email: String(body.email || '').trim(), mobile: String(body.mobile).trim(),
+            password: String(body.password), role: ['seller', 'buyer'].includes(body.role) ? body.role : 'seller', language: String(body.language || 'en'),
+        })
+        const token = authRepository.createSession(user)
+        response.cookie('kisansetu_session', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 86400000 })
+        response.status(200).json({ message: 'Account created.', user: { id: user.id, fullName: user.fullName, role: user.role } })
+    } catch (error) {
+        response.status(error.code === '23505' ? 409 : 400).json({ error: error.code === '23505' ? 'That mobile number or email is already registered.' : error.message })
+    }
+})
+
+app.post('/api/auth/login', async (request, response) => {
+    const body = request.body
+    const validationError = validateAuthInput(body, false)
+    if (validationError) return response.status(400).json({ error: validationError })
+    try {
+        const user = await authRepository.findByLogin(String(body.mobile).trim())
+        if (!user || !(await authRepository.passwordMatches(String(body.password), user))) return response.status(401).json({ error: 'Incorrect login details.' })
+        const token = authRepository.createSession(user)
+        response.cookie('kisansetu_session', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 86400000 })
+        response.json({ message: 'Login successful.', user: { id: user.id, fullName: user.fullName, role: user.role } })
+    } catch (error) {
+        response.status(400).json({ error: error.message })
+    }
+})
+
+app.post('/api/auth/logout', (request, response) => {
+    response.clearCookie('kisansetu_session', { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' })
+    response.status(204).end()
+})
+
+app.post('/api/crop-registrations', async (request, response) => {
+    const body = request.body
+    const validationError = validateCropRegistration(body)
+    if (validationError) return response.status(400).json({ error: validationError })
+    try {
+        const registration = await cropRepository.create({
+            crop: body.crop === 'Other' ? String(body.otherCrop).trim() : String(body.crop).trim(),
+            quantity: Number(body.quantity), unit: String(body.unit), center: String(body.center).trim(),
+            address: String(body.address).trim(), district: String(body.district).trim(), pincode: String(body.pincode),
+        })
+        response.status(201).json({ message: 'Crop registration received.', registration })
+    } catch (error) {
+        response.status(400).json({ error: error.message || 'Unable to save crop registration.' })
+    }
+})
+
+app.use(express.static(frontendRoot, { extensions: ['html'] }))
+app.use((request, response) => {
+    if (request.path.startsWith('/api/')) return response.status(404).json({ error: 'API route not found.' })
+    response.status(404).type('text').send('Not found')
+})
+
+const server = app.listen(port, () => {
     console.log(`KisanSetu frontend available at http://localhost:${port}`)
 })
 
@@ -192,3 +127,5 @@ const shutdown = async () => {
 
 process.on('SIGTERM', shutdown)
 process.on('SIGINT', shutdown)
+
+module.exports = { app, server }

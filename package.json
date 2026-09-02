@@ -3,14 +3,31 @@
   "version": "1.0.0",
   "private": true,
   "description": "KisanSetu frontend and backend",
-  "engines": {
-    "node": ">=20"
+  "keywords": [
+    "kisansetu",
+    "farmarseller"
+  ],
+  "homepage": "https://github.com/panzer01052005-creator/KisanSetu#readme",
+  "bugs": {
+    "url": "https://github.com/panzer01052005-creator/KisanSetu/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/panzer01052005-creator/KisanSetu.git"
+  },
+  "license": "ISC",
+  "author": "Abhishek kumar",
+  "type": "commonjs",
+  "main": "index.js",
   "scripts": {
     "start": "node backend/server.js",
     "check": "node --check backend/server.js && node --check backend/crop-repository.js && node --check backend/database.js"
   },
   "dependencies": {
+    "express": "^5.2.1",
     "pg": "^8.23.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
