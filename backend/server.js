@@ -2,10 +2,12 @@ const http = require('node:http')
 const fs = require('node:fs')
 const path = require('node:path')
 const { createCropRepository } = require('./crop-repository')
+const { createDatabase } = require('./database')
 
 const frontendRoot = path.resolve(__dirname, '..', 'frontend')
 const port = Number(process.env.PORT) || 3000
-const cropRepository = createCropRepository()
+const database = createDatabase()
+const cropRepository = createCropRepository(database || undefined)
 const contentTypes = {
     '.css': 'text/css; charset=utf-8',
     '.html': 'text/html; charset=utf-8',
@@ -40,7 +42,7 @@ const validateCropRegistration = (body) => {
     const unit = String(body.unit || '')
     const requiredFields = [crop, body.center, body.address, body.district, body.pincode]
 
-    if (requiredFields.some((field) => !String(field).trim()) || !Number.isFinite(quantity) || quantity <= 0) {
+    if (requiredFields.some((field) => field === undefined || field === null || !String(field).trim()) || !Number.isFinite(quantity) || quantity <= 0) {
         return 'Crop, quantity, collection center, and complete address are required.'
     }
     if (!['kg', 'quintal', 'ton'].includes(unit)) return 'Quantity unit is invalid.'
@@ -49,6 +51,19 @@ const validateCropRegistration = (body) => {
 }
 
 const handleApiRequest = async (request, response) => {
+    if (request.method === 'GET' && request.url.split('?')[0] === '/api/health') {
+        if (!database) {
+            sendJson(response, 200, { status: 'ok', database: 'memory', message: 'Set DATABASE_URL to enable PostgreSQL.' })
+            return true
+        }
+        try {
+            await database.query('SELECT 1')
+            sendJson(response, 200, { status: 'ok', database: 'postgresql' })
+        } catch {
+            sendJson(response, 503, { status: 'error', database: 'unavailable' })
+        }
+        return true
+    }
     if (request.method !== 'POST' || request.url.split('?')[0] !== '/api/crop-registrations') return false
 
     try {

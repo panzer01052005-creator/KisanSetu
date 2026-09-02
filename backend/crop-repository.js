@@ -7,7 +7,9 @@ const createCropRepository = ({ query } = {}) => ({
                 `INSERT INTO crop_registrations
                     (crop_name, quantity, unit, collection_center, address, district, pincode)
                  VALUES ($1, $2, $3, $4, $5, $6, $7)
-                 RETURNING id, crop_name, quantity, unit, collection_center, status, created_at`,
+                      RETURNING id, crop_name AS crop, quantity, unit,
+                          collection_center AS center, address, district, pincode,
+                          status, created_at AS "createdAt"`,
                 [registration.crop, registration.quantity, registration.unit, registration.center, registration.address, registration.district, registration.pincode],
             )
             return result.rows[0]
