@@ -31,7 +31,7 @@
         <p>Enter your crop details to get a delivery slot.</p>
       </div>
 
-      <form class="register-form" id="crop-form" action="../Queue/queue-details.html" method="get">
+      <form class="register-form" id="crop-form">
         <label for="crop">Crop</label>
         <select id="crop" name="crop" required>
           <option value="" selected disabled>Select your crop</option>
@@ -75,6 +75,7 @@
         </div>
 
         <button type="submit">Register crop <span aria-hidden="true">→</span></button>
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
       </form>
       <p class="terms">Your crop details help us prepare your inspection and queue slot.</p>
     </section>
@@ -92,6 +93,8 @@
     const centerResults = document.getElementById('center-results');
     const placeInput = document.getElementById('place');
     const searchPlaceButton = document.getElementById('search-place');
+    const cropForm = document.getElementById('crop-form');
+    const formStatus = document.getElementById('form-status');
     const centers = [
       { name: 'Shivaji Nagar Mandi', lat: 28.367, lng: 79.430 },
       { name: 'Agriculture Produce Market, Bareilly', lat: 28.347, lng: 79.414 },
@@ -182,6 +185,31 @@
       } finally {
         searchPlaceButton.disabled = false;
         searchPlaceButton.textContent = 'Find nearby centers';
+      }
+    });
+
+    cropForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const submitButton = cropForm.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.textContent = 'Saving...';
+      formStatus.textContent = '';
+      try {
+        const response = await fetch('/api/crop-registrations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(new FormData(cropForm))),
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Unable to register crop.');
+        formStatus.className = 'form-status success';
+        formStatus.textContent = `Crop registered successfully. Registration ID: ${result.registration.id}`;
+        submitButton.textContent = 'Crop registered';
+      } catch (error) {
+        formStatus.className = 'form-status error';
+        formStatus.textContent = error.message;
+        submitButton.disabled = false;
+        submitButton.textContent = 'Register crop →';
       }
     });
   </script>

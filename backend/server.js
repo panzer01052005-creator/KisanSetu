@@ -1,9 +1,11 @@
 const http = require('node:http')
 const fs = require('node:fs')
 const path = require('node:path')
+const { createCropRepository } = require('./crop-repository')
 
 const frontendRoot = path.resolve(__dirname, '..', 'frontend')
 const port = Number(process.env.PORT) || 3000
+const cropRepository = createCropRepository()
 const contentTypes = {
     '.css': 'text/css; charset=utf-8',
     '.html': 'text/html; charset=utf-8',
@@ -11,7 +13,70 @@ const contentTypes = {
     '.svg': 'image/svg+xml',
 }
 
-const server = http.createServer((request, response) => {
+const sendJson = (response, statusCode, payload) => {
+    response.writeHead(statusCode, { 'Content-Type': 'application/json; charset=utf-8' })
+    response.end(JSON.stringify(payload))
+}
+
+const readJsonBody = (request) => new Promise((resolve, reject) => {
+    let body = ''
+    request.on('data', (chunk) => {
+        body += chunk
+        if (body.length > 1024 * 1024) reject(new Error('Request body is too large'))
+    })
+    request.on('end', () => {
+        try {
+            resolve(JSON.parse(body || '{}'))
+        } catch {
+            reject(new Error('Request body must be valid JSON'))
+        }
+    })
+    request.on('error', reject)
+})
+
+const validateCropRegistration = (body) => {
+    const crop = body.crop === 'Other' ? String(body.otherCrop || '').trim() : String(body.crop || '').trim()
+    const quantity = Number(body.quantity)
+    const unit = String(body.unit || '')
+    const requiredFields = [crop, body.center, body.address, body.district, body.pincode]
+
+    if (requiredFields.some((field) => !String(field).trim()) || !Number.isFinite(quantity) || quantity <= 0) {
+        return 'Crop, quantity, collection center, and complete address are required.'
+    }
+    if (!['kg', 'quintal', 'ton'].includes(unit)) return 'Quantity unit is invalid.'
+    if (!/^[0-9]{6}$/.test(String(body.pincode))) return 'PIN code must contain 6 digits.'
+    return null
+}
+
+const handleApiRequest = async (request, response) => {
+    if (request.method !== 'POST' || request.url.split('?')[0] !== '/api/crop-registrations') return false
+
+    try {
+        const body = await readJsonBody(request)
+        const validationError = validateCropRegistration(body)
+        if (validationError) {
+            sendJson(response, 400, { error: validationError })
+            return true
+        }
+
+        const registration = await cropRepository.create({
+            crop: body.crop === 'Other' ? String(body.otherCrop).trim() : String(body.crop).trim(),
+            quantity: Number(body.quantity),
+            unit: String(body.unit),
+            center: String(body.center).trim(),
+            address: String(body.address).trim(),
+            district: String(body.district).trim(),
+            pincode: String(body.pincode),
+        })
+        sendJson(response, 201, { message: 'Crop registration received.', registration })
+    } catch (error) {
+        sendJson(response, 400, { error: error.message || 'Unable to save crop registration.' })
+    }
+    return true
+}
+
+const server = http.createServer(async (request, response) => {
+    if (await handleApiRequest(request, response)) return
     const requestPath = decodeURIComponent(request.url.split('?')[0])
     const relativePath = requestPath === '/' ? 'index.html' : requestPath.slice(1)
     const filePath = path.resolve(frontendRoot, relativePath)

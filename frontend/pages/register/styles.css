@@ -336,6 +336,21 @@ a {
     font-size: 17px;
 }
 
+.form-status {
+    min-height: 16px;
+    margin: 2px 0 0;
+    font-size: 11px;
+    text-align: center;
+}
+
+.form-status.success {
+    color: var(--green);
+}
+
+.form-status.error {
+    color: #b34835;
+}
+
 .terms {
     margin: 18px 0 0;
     text-align: center;
