@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "description": "KisanSetu frontend and backend",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "start": "node backend/server.js"
+    "start": "node backend/server.js",
+    "check": "node --check backend/server.js && node --check backend/crop-repository.js && node --check backend/database.js"
   },
   "dependencies": {
     "pg": "^8.23.0"

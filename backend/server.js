@@ -7,6 +7,9 @@ const { createDatabase } = require('./database')
 const frontendRoot = path.resolve(__dirname, '..', 'frontend')
 const port = Number(process.env.PORT) || 3000
 const database = createDatabase()
+if (process.env.NODE_ENV === 'production' && !database && process.env.ALLOW_MEMORY_STORAGE !== 'true') {
+    throw new Error('DATABASE_URL is required in production. Set ALLOW_MEMORY_STORAGE=true only for temporary testing.')
+}
 const cropRepository = createCropRepository(database || undefined)
 const contentTypes = {
     '.css': 'text/css; charset=utf-8',
@@ -16,7 +19,10 @@ const contentTypes = {
 }
 
 const sendJson = (response, statusCode, payload) => {
-    response.writeHead(statusCode, { 'Content-Type': 'application/json; charset=utf-8' })
+    response.writeHead(statusCode, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store',
+    })
     response.end(JSON.stringify(payload))
 }
 
@@ -113,6 +119,9 @@ const server = http.createServer(async (request, response) => {
 
             response.writeHead(200, {
                 'Content-Type': contentTypes[path.extname(resolvedPath)] || 'application/octet-stream',
+                'X-Content-Type-Options': 'nosniff',
+                'X-Frame-Options': 'SAMEORIGIN',
+                'Referrer-Policy': 'strict-origin-when-cross-origin',
             })
             response.end(content)
         })
@@ -122,3 +131,11 @@ const server = http.createServer(async (request, response) => {
 server.listen(port, () => {
     console.log(`KisanSetu frontend available at http://localhost:${port}`)
 })
+
+const shutdown = async () => {
+    server.close()
+    if (database) await database.pool.end()
+}
+
+process.on('SIGTERM', shutdown)
+process.on('SIGINT', shutdown)
