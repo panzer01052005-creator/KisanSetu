@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Register your crop and quantity with KisanSetu.">
+  <title>Register Crop | KisanSetu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../../assets/theme.css">
+  <script type="text/javascript" src="../../assets/site.js" defer></script>
+</head>
+<body>
+  <main class="register-page">
+    <a class="brand" href="../home/index.html" aria-label="KisanSetu home"><span class="brand-mark" aria-hidden="true"><i></i><b></b></span><span>Kisan<span>Setu</span></span></a>
+    <div class="header-actions register-page-actions">
+      <label class="language-field" aria-label="Language selector">
+        <select class="language-select" aria-label="Select language">
+          <option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option>
+        </select>
+      </label>
+    </div>
+
+    <section class="register-card" aria-labelledby="register-title">
+      <div class="card-heading">
+        <p class="eyebrow">Harvest registration</p>
+        <h1 id="register-title">Register your crop</h1>
+        <p>Enter your crop details to get a delivery slot.</p>
+      </div>
+
+      <form class="register-form" id="crop-form" action="../Queue/queue-details.html" method="get">
+        <label for="crop">Crop</label>
+        <select id="crop" name="crop" required>
+          <option value="" selected disabled>Select your crop</option>
+          <option>Tomato</option><option>Onion</option><option>Wheat</option><option>Potato</option><option>Rice</option><option>Maize</option><option>Other</option>
+        </select>
+        <div class="other-crop" id="other-crop-field" hidden>
+          <label for="other-crop">Crop name</label>
+          <input id="other-crop" name="otherCrop" type="text" placeholder="Write your crop name">
+        </div>
+
+        <label for="quantity">Quantity</label>
+        <div class="quantity-field">
+          <input id="quantity" name="quantity" type="number" min="1" step="0.1" placeholder="Enter quantity" required>
+          <select id="unit" name="unit" aria-label="Quantity unit"><option>kg</option><option>quintal</option><option>ton</option></select>
+        </div>
+
+        <label for="center">Collection center</label>
+        <select id="center" name="center" required>
+          <option value="" selected disabled>Select a collection center</option>
+          <option>Shivaji Nagar Mandi</option><option>Agriculture Produce Market, Bareilly</option><option>Model Town Collection Center</option>
+        </select>
+        <div class="location-tools">
+          <button class="location-button" id="locate-button" type="button">⌖ Find nearby collection centers</button>
+        </div>
+        <div class="place-search">
+          <label for="place">Search your city, town, or village</label>
+          <div class="place-search-row"><input id="place" type="search" placeholder="e.g. Bareilly, Uttar Pradesh"><button class="location-button" id="search-place" type="button">Find nearby centers</button></div>
+        </div>
+        <p class="location-status" id="location-status" role="status" aria-live="polite">Use your location to find nearby collection centers.</p>
+        <div class="nearby-centers" id="nearby-centers" hidden>
+          <strong>Nearby collection centers</strong>
+          <div id="center-results"></div>
+        </div>
+
+        <div class="address-heading"><span>Farm address</span><small>Used to find nearby centers</small></div>
+        <label for="address">Address</label>
+        <input id="address" name="address" type="text" placeholder="House number, street or village" required>
+        <div class="address-grid">
+          <div><label for="district">District</label><input id="district" name="district" type="text" placeholder="District" required></div>
+          <div><label for="pincode">PIN code</label><input id="pincode" name="pincode" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit PIN" required></div>
+        </div>
+
+        <button type="submit">Register crop <span aria-hidden="true">→</span></button>
+      </form>
+      <p class="terms">Your crop details help us prepare your inspection and queue slot.</p>
+    </section>
+
+    <p class="support-note"><a href="../dashboard/index.html">← Back to dashboard</a></p>
+  </main>
+  <script type="text/javascript">
+    const cropSelect = document.getElementById('crop');
+    const otherCropField = document.getElementById('other-crop-field');
+    const otherCropInput = document.getElementById('other-crop');
+    const centerSelect = document.getElementById('center');
+    const locateButton = document.getElementById('locate-button');
+    const locationStatus = document.getElementById('location-status');
+    const nearbyCenters = document.getElementById('nearby-centers');
+    const centerResults = document.getElementById('center-results');
+    const placeInput = document.getElementById('place');
+    const searchPlaceButton = document.getElementById('search-place');
+    const centers = [
+      { name: 'Shivaji Nagar Mandi', lat: 28.367, lng: 79.430 },
+      { name: 'Agriculture Produce Market, Bareilly', lat: 28.347, lng: 79.414 },
+      { name: 'Model Town Collection Center', lat: 28.382, lng: 79.425 }
+    ];
+
+    const distanceInKilometers = (latitudeOne, longitudeOne, latitudeTwo, longitudeTwo) => {
+      const earthRadius = 6371;
+      const latitudeDifference = (latitudeTwo - latitudeOne) * Math.PI / 180;
+      const longitudeDifference = (longitudeTwo - longitudeOne) * Math.PI / 180;
+      const distance = Math.sin(latitudeDifference / 2) ** 2
+        + Math.cos(latitudeOne * Math.PI / 180) * Math.cos(latitudeTwo * Math.PI / 180) * Math.sin(longitudeDifference / 2) ** 2;
+      return earthRadius * 2 * Math.atan2(Math.sqrt(distance), Math.sqrt(1 - distance));
+    };
+
+    const showNearbyCenters = (latitude, longitude, locationLabel) => {
+      const nearby = centers
+        .map((center) => ({ ...center, distance: distanceInKilometers(latitude, longitude, center.lat, center.lng) }))
+        .sort((firstCenter, secondCenter) => firstCenter.distance - secondCenter.distance);
+
+      locationStatus.textContent = `${locationLabel} found. Select a nearby collection center below.`;
+      centerResults.innerHTML = nearby.map((center) => {
+        const directions = `https://www.google.com/maps/dir/?api=1&destination=${center.lat},${center.lng}`;
+        return `<button class="center-result" type="button" data-center="${center.name}"><span><strong>${center.name}</strong><small>${center.distance.toFixed(1)} km away</small></span><a href="${directions}" target="_blank" rel="noopener" aria-label="Get directions to ${center.name}">Directions ↗</a></button>`;
+      }).join('');
+      nearbyCenters.hidden = false;
+      centerResults.querySelectorAll('.center-result').forEach((result) => {
+        result.addEventListener('click', (event) => {
+          if (event.target.closest('a')) return;
+          centerSelect.value = result.dataset.center;
+          centerSelect.dispatchEvent(new Event('change'));
+        });
+      });
+    };
+
+    cropSelect.addEventListener('change', () => {
+      const isOther = cropSelect.value === 'Other';
+      otherCropField.hidden = !isOther;
+      otherCropInput.required = isOther;
+      if (!isOther) otherCropInput.value = '';
+    });
+
+    centerSelect.addEventListener('change', () => {
+    });
+
+    locateButton.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        locationStatus.textContent = 'Location is not supported by this browser.';
+        return;
+      }
+
+      locateButton.disabled = true;
+      locateButton.textContent = 'Locating...';
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        showNearbyCenters(latitude, longitude, 'Your location');
+        const locationMap = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+        const mapWindow = window.open(locationMap, '_blank', 'noopener');
+        if (!mapWindow) {
+          locationStatus.textContent = 'Your location found. Allow pop-ups to open Google Maps.';
+        }
+        locateButton.disabled = false;
+        locateButton.textContent = '⌖ Find nearby collection centers';
+      }, () => {
+        locationStatus.textContent = 'We could not access your location. Check browser permissions and try again.';
+        locateButton.disabled = false;
+        locateButton.textContent = '⌖ Find nearby collection centers';
+      }, { enableHighAccuracy: true, timeout: 10000 });
+    });
+
+    searchPlaceButton.addEventListener('click', async () => {
+      const place = placeInput.value.trim();
+      if (!place) {
+        placeInput.focus();
+        locationStatus.textContent = 'Enter a city, town, or village first.';
+        return;
+      }
+
+      searchPlaceButton.disabled = true;
+      searchPlaceButton.textContent = 'Searching...';
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=in&q=${encodeURIComponent(place)}`, { headers: { Accept: 'application/json' } });
+        const results = await response.json();
+        if (!results.length) throw new Error('Place not found');
+        showNearbyCenters(Number(results[0].lat), Number(results[0].lon), place);
+      } catch (error) {
+        locationStatus.textContent = 'We could not find that place. Try adding the district or state.';
+      } finally {
+        searchPlaceButton.disabled = false;
+        searchPlaceButton.textContent = 'Find nearby centers';
+      }
+    });
+  </script>
+</body>
+</html>
