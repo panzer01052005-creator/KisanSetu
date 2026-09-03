@@ -24,6 +24,7 @@
     "check": "node --check backend/server.js && node --check backend/crop-repository.js && node --check backend/database.js"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "pg": "^8.23.0"
   },
