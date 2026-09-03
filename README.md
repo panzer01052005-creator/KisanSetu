@@ -32,7 +32,25 @@ GOOGLE_MAPS_API_KEY=your-browser-restricted-google-maps-key
 
 ## Google Maps setup
 
-Create a Google Cloud API key with Maps JavaScript API and Places API enabled. Restrict the key to the deployed website origins, then set `GOOGLE_MAPS_API_KEY` in the server environment. The registration page uses the key for place search and the in-page collection-center map; without it, browser geolocation and the center list remain available but the map search is disabled.
+Create a Google Cloud API key with Maps JavaScript API, Places API, and Geocoding API enabled. Restrict the key to the deployed website origins, then set `GOOGLE_MAPS_API_KEY` in the server environment. The registration page uses the key for place search and the in-page collection-center map; without it, browser geolocation and the center list remain available but the map search is disabled.
+
+### Docker deployment
+
+Build and run the image with runtime environment variables. Do not copy a `.env` file into the image or commit one to the repository.
+
+```bash
+docker build -t kisansetu .
+docker run -p 3000:3000 \
+	-e NODE_ENV=production \
+	-e PORT=3000 \
+	-e MONGO_URI="$MONGO_URI" \
+	-e ALLOW_MEMORY_STORAGE=false \
+	-e GOOGLE_MAPS_API_KEY="$GOOGLE_MAPS_API_KEY" \
+	kisansetu
+```
+
+Configure the same variables as protected secrets in your hosting provider. The `.dockerignore` file excludes `.env` files, including `backend/.env`, from the build context.
+
 The included `Dockerfile` starts the app as a non-root user. The platform should route its public port to the value of `PORT` and use `GET /api/health` as its health check. Do not set `ALLOW_MEMORY_STORAGE=true` in production because memory data is lost on restart.
 
 ## Database setup
