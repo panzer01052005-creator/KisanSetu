@@ -6,6 +6,7 @@ RUN npm ci --omit=dev
 
 COPY backend ./backend
 COPY frontend ./frontend
+COPY src ./src
 
 ENV NODE_ENV=production
 ENV PORT=3000

@@ -65,6 +65,7 @@
           <strong>Nearby collection centers</strong>
           <div id="center-results"></div>
         </div>
+        <div class="location-map" id="location-map" aria-label="Collection center map"></div>
 
         <div class="address-heading"><span>Farm address</span><small>Used to find nearby centers</small></div>
         <label for="address">Address</label>
@@ -91,6 +92,7 @@
     const locationStatus = document.getElementById('location-status');
     const nearbyCenters = document.getElementById('nearby-centers');
     const centerResults = document.getElementById('center-results');
+    const locationMap = document.getElementById('location-map');
     const placeInput = document.getElementById('place');
     const searchPlaceButton = document.getElementById('search-place');
     const cropForm = document.getElementById('crop-form');
@@ -100,6 +102,55 @@
       { name: 'Agriculture Produce Market, Bareilly', lat: 28.347, lng: 79.414 },
       { name: 'Model Town Collection Center', lat: 28.382, lng: 79.425 }
     ];
+    let googleMap;
+    let googleMapsReady;
+
+    const loadGoogleMaps = async () => {
+      if (window.google?.maps) return window.google.maps;
+      if (!googleMapsReady) {
+        googleMapsReady = fetch('/api/config')
+          .then((response) => response.json())
+          .then(({ googleMapsApiKey }) => {
+            if (!googleMapsApiKey) return null;
+            return new Promise((resolve, reject) => {
+              const callbackName = `googleMapsCallback_${Date.now()}`;
+              window[callbackName] = () => {
+                delete window[callbackName];
+                resolve(window.google.maps);
+              };
+              const script = document.createElement('script');
+              script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(googleMapsApiKey)}&libraries=places&callback=${callbackName}`;
+              script.async = true;
+              script.defer = true;
+              script.onerror = () => {
+                delete window[callbackName];
+                reject(new Error('Google Maps could not load.'));
+              };
+              document.head.appendChild(script);
+            });
+          });
+      }
+      return googleMapsReady;
+    };
+
+    const updateMap = async (latitude, longitude) => {
+      const maps = await loadGoogleMaps();
+      if (!maps) {
+        locationMap.hidden = true;
+        return;
+      }
+      const position = { lat: latitude, lng: longitude };
+      if (!googleMap) {
+        googleMap = new maps.Map(locationMap, { center: position, zoom: 11, mapTypeControl: false, streetViewControl: false });
+        centers.forEach((center) => {
+          new maps.Marker({ map: googleMap, position: { lat: center.lat, lng: center.lng }, title: center.name });
+        });
+      } else {
+        googleMap.setCenter(position);
+      }
+      new maps.Marker({ map: googleMap, position, title: 'Your location' });
+      locationMap.hidden = false;
+    };
 
     const distanceInKilometers = (latitudeOne, longitudeOne, latitudeTwo, longitudeTwo) => {
       const earthRadius = 6371;
@@ -116,6 +167,9 @@
         .sort((firstCenter, secondCenter) => firstCenter.distance - secondCenter.distance);
 
       locationStatus.textContent = `${locationLabel} found. Select a nearby collection center below.`;
+      updateMap(latitude, longitude).catch(() => {
+        locationStatus.textContent += ' The map is unavailable right now.';
+      });
       centerResults.innerHTML = nearby.map((center) => {
         const directions = `https://www.google.com/maps/dir/?api=1&destination=${center.lat},${center.lng}`;
         return `<button class="center-result" type="button" data-center="${center.name}"><span><strong>${center.name}</strong><small>${center.distance.toFixed(1)} km away</small></span><a href="${directions}" target="_blank" rel="noopener" aria-label="Get directions to ${center.name}">Directions ↗</a></button>`;
@@ -151,11 +205,6 @@
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
         showNearbyCenters(latitude, longitude, 'Your location');
-        const locationMap = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-        const mapWindow = window.open(locationMap, '_blank', 'noopener');
-        if (!mapWindow) {
-          locationStatus.textContent = 'Your location found. Allow pop-ups to open Google Maps.';
-        }
         locateButton.disabled = false;
         locateButton.textContent = '⌖ Find nearby collection centers';
       }, () => {

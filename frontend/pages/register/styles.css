@@ -235,6 +235,16 @@ a {
     font-size: 11px;
 }
 
+.location-map {
+    width: 100%;
+    min-height: 240px;
+    margin: 4px 0 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #edf2ed;
+}
+
 #center-results {
     display: grid;
     gap: 6px;

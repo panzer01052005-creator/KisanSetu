@@ -11,7 +11,7 @@ const port = Number(process.env.PORT) || 3000
 const database = createDatabase()
 
 if (process.env.NODE_ENV === 'production' && !database && process.env.ALLOW_MEMORY_STORAGE !== 'true') {
-    throw new Error('DATABASE_URL is required in production. Set ALLOW_MEMORY_STORAGE=true only for temporary testing.')
+    throw new Error('MONGO_URI is required in production. Set ALLOW_MEMORY_STORAGE=true only for temporary testing.')
 }
 
 const cropRepository = createCropRepository(database || undefined)
@@ -49,14 +49,18 @@ const validateCropRegistration = (body) => {
 }
 
 app.get('/api/health', async (request, response) => {
-    if (!database) return response.json({ status: 'ok', database: 'memory', message: 'Set DATABASE_URL to enable PostgreSQL.' })
+    if (!database) return response.json({ status: 'ok', database: 'memory', message: 'Set MONGO_URI to enable MongoDB.' })
     try {
-        await database.query('SELECT 1')
-        response.json({ status: 'ok', database: 'postgresql' })
+        await database.connection.db.admin().ping()
+        response.json({ status: 'ok', database: 'mongodb' })
     } catch {
         response.status(503).json({ status: 'error', database: 'unavailable' })
     }
 })
+
+    app.get('/api/config', (request, response) => {
+        response.json({ googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || '' })
+    })
 
 app.post('/api/auth/register', async (request, response) => {
     const body = request.body
@@ -123,7 +127,7 @@ const server = app.listen(port, () => {
 
 const shutdown = async () => {
     server.close()
-    if (database) await database.pool.end()
+    if (database) await database.connection.close()
 }
 
 process.on('SIGTERM', shutdown)

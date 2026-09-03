@@ -1,6 +1,6 @@
 # KisanSetu
 
-KisanSetu is a static farmer procurement experience with a small Node backend for local serving.
+KisanSetu is a static farmer procurement experience with a small Node backend backed by MongoDB.
 
 ## Project structure
 
@@ -25,26 +25,29 @@ The app can run on any Node 20 host or container platform. Set these environment
 ```text
 NODE_ENV=production
 PORT=3000
-DATABASE_URL=postgres://user:password@host:5432/kisansetu
+MONGO_URI=mongodb+srv://user:password@cluster.mongodb.net/kisansetu
 ALLOW_MEMORY_STORAGE=false
+GOOGLE_MAPS_API_KEY=your-browser-restricted-google-maps-key
 ```
 
+## Google Maps setup
+
+Create a Google Cloud API key with Maps JavaScript API and Places API enabled. Restrict the key to the deployed website origins, then set `GOOGLE_MAPS_API_KEY` in the server environment. The registration page uses the key for place search and the in-page collection-center map; without it, browser geolocation and the center list remain available but the map search is disabled.
 The included `Dockerfile` starts the app as a non-root user. The platform should route its public port to the value of `PORT` and use `GET /api/health` as its health check. Do not set `ALLOW_MEMORY_STORAGE=true` in production because memory data is lost on restart.
 
 ## Database setup
 
-The project is prepared for PostgreSQL. Create a database, set `DATABASE_URL`, and apply the schema:
+Create a MongoDB database, add its connection string as `MONGO_URI`, and start the app:
 
 ```bash
-export DATABASE_URL=postgres://user:password@localhost:5432/kisansetu
-psql "$DATABASE_URL" -f backend/schema.sql
+export MONGO_URI=mongodb://localhost:27017/kisansetu
 npm start
 ```
 
-`GET /api/health` reports `database: "postgresql"` when the connection is working. For local development, omit `DATABASE_URL` or set `ALLOW_MEMORY_STORAGE=true`; it reports `database: "memory"` and does not persist data.
+`GET /api/health` reports `database: "mongodb"` when the connection is working. For local development, omit `MONGO_URI` and set `ALLOW_MEMORY_STORAGE=true`; it reports `database: "memory"` and does not persist data.
 
 ## Crop registration API
 
 `POST /api/crop-registrations` accepts JSON with `crop`, `otherCrop` (when crop is `Other`), `quantity`, `unit`, `center`, `address`, `district`, and `pincode`. The server validates the request and currently stores it in memory for local development.
 
-The SQL-ready repository accepts a parameterized `query` function, and the PostgreSQL table definition is in `backend/schema.sql`. Connect a PostgreSQL pool by passing its `query` method to `createCropRepository` in `backend/server.js`; the frontend API contract does not need to change.
+User accounts and crop registrations are stored in MongoDB through the Mongoose models defined in the repositories. The frontend API contract does not need to change.

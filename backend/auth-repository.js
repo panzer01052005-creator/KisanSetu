@@ -1,7 +1,17 @@
 const crypto = require('node:crypto')
+const mongoose = require('mongoose')
 
 const users = []
 const sessions = new Map()
+const userSchema = new mongoose.Schema({
+    fullName: { type: String, required: true, trim: true, maxlength: 120 },
+    email: { type: String, trim: true, lowercase: true, unique: true, sparse: true, maxlength: 160 },
+    mobile: { type: String, required: true, unique: true, trim: true, maxlength: 20 },
+    passwordHash: { type: String, required: true },
+    role: { type: String, enum: ['seller', 'buyer', 'admin'], default: 'seller' },
+    language: { type: String, default: 'en', maxlength: 10 },
+}, { timestamps: true })
+const User = mongoose.models.User || mongoose.model('User', userSchema)
 
 const hashPassword = (password) => new Promise((resolve, reject) => {
     const salt = crypto.randomBytes(16).toString('hex')
@@ -21,17 +31,12 @@ const verifyPassword = (password, storedHash) => new Promise((resolve, reject) =
     })
 })
 
-const createAuthRepository = ({ query } = {}) => ({
+const createAuthRepository = (database = {}) => ({
     async createUser({ fullName, email, mobile, password, role, language }) {
         const passwordHash = await hashPassword(password)
-        if (query) {
-            const result = await query(
-                `INSERT INTO users (full_name, email, mobile, password_hash, role, language)
-                 VALUES ($1, $2, $3, $4, $5, $6)
-                 RETURNING id, full_name AS "fullName", email, mobile, role, language`,
-                [fullName, email || null, mobile, passwordHash, role, language],
-            )
-            return result.rows[0]
+        if (database.type === 'mongodb') {
+            const user = await User.create({ fullName, email: email || undefined, mobile, passwordHash, role, language })
+            return { id: user.id, fullName: user.fullName, email: user.email, mobile: user.mobile, role: user.role, language: user.language }
         }
         const user = { id: `USR-${String(users.length + 1).padStart(4, '0')}`, fullName, email, mobile, passwordHash, role, language }
         users.push(user)
@@ -39,13 +44,8 @@ const createAuthRepository = ({ query } = {}) => ({
     },
 
     async findByLogin(login) {
-        if (query) {
-            const result = await query(
-                `SELECT id, full_name AS "fullName", email, mobile, password_hash, role, language
-                 FROM users WHERE mobile = $1 OR LOWER(email) = LOWER($1) LIMIT 1`,
-                [login],
-            )
-            return result.rows[0] || null
+        if (database.type === 'mongodb') {
+            return User.findOne({ $or: [{ mobile: login }, { email: login.toLowerCase() }] }).lean()
         }
         return users.find((user) => user.mobile === login || (user.email && user.email.toLowerCase() === login.toLowerCase())) || null
     },
