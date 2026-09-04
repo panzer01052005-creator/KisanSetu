@@ -12,6 +12,7 @@ const frontendRoot = path.resolve(__dirname, '..', 'frontend')
 const port = Number(process.env.PORT) || 3000
 const database = createDatabase()
 const sessionSecret = process.env.SESSION_SECRET
+const configuredFrontendOrigins = (process.env.FRONTEND_ORIGINS || '').split(',').map((origin) => origin.trim()).filter(Boolean)
 
 if (process.env.NODE_ENV === 'production' && !database && process.env.ALLOW_MEMORY_STORAGE !== 'true') {
     throw new Error('MONGO_URI is required in production. Set ALLOW_MEMORY_STORAGE=true only for temporary testing.')
@@ -45,6 +46,22 @@ const requireAuthentication = (request, response, next) => {
 
 app.disable('x-powered-by')
 app.use(express.json({ limit: '1mb' }))
+app.use((request, response, next) => {
+    const origin = request.get('Origin')
+    const isCodespacesLiveServer = /^https:\/\/.+-5501\.app\.github\.dev$/.test(origin || '')
+    const isLocalLiveServer = /^https?:\/\/(localhost|127\.0\.0\.1):5501$/.test(origin || '')
+    if (origin && (configuredFrontendOrigins.includes(origin) || isCodespacesLiveServer || isLocalLiveServer)) {
+        response.set({
+            'Access-Control-Allow-Origin': origin,
+            'Access-Control-Allow-Credentials': 'true',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+            Vary: 'Origin',
+        })
+    }
+    if (request.method === 'OPTIONS') return response.sendStatus(204)
+    next()
+})
 app.use(session({
     name: 'kisansetu.sid',
     secret: sessionSecret || 'development-only-session-secret',
@@ -161,12 +178,20 @@ app.use((request, response) => {
     response.status(404).type('text').send('Not found')
 })
 
-const server = app.listen(port, () => {
-    console.log(`KisanSetu frontend available at http://localhost:${port}`)
+let server
+const startServer = async () => {
+    if (database) await database.ready
+    server = app.listen(port, () => {
+        console.log(`KisanSetu frontend available at http://localhost:${port}`)
+    })
+}
+startServer().catch((error) => {
+    console.error(`Unable to start the server: ${error.message}`)
+    process.exitCode = 1
 })
 
 const shutdown = async () => {
-    server.close()
+    if (server) server.close()
     if (database) await database.connection.close()
 }
 

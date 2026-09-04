@@ -1,3 +1,13 @@
+const apiBaseUrl = (() => {
+    if (window.location.hostname.endsWith('.app.github.dev') && window.location.port === '5501') {
+        return `${window.location.protocol}//${window.location.hostname.replace('-5501.', '-3000.')}`
+    }
+    if (['localhost', '127.0.0.1'].includes(window.location.hostname) && window.location.port === '5501') {
+        return 'http://localhost:3000'
+    }
+    return ''
+})()
+
 document.addEventListener('DOMContentLoaded', () => {
     const translations = {
         en: {
@@ -431,9 +441,10 @@ document.addEventListener('DOMContentLoaded', () => {
             submitButton.disabled = true
             submitButton.textContent = action === 'register' ? 'Creating account...' : 'Signing in...'
             try {
-                const response = await fetch(`/api/auth/${action}`, {
+                const response = await fetch(`${apiBaseUrl}/api/auth/${action}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify(Object.fromEntries(new FormData(form))),
                 })
                 const responseText = await response.text()

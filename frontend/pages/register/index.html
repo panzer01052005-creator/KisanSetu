@@ -117,7 +117,7 @@
     const loadGoogleMaps = async () => {
       if (window.google?.maps) return window.google.maps;
       if (!googleMapsReady) {
-        googleMapsReady = fetch('/api/config')
+        googleMapsReady = fetch(`${apiBaseUrl}/api/config`, { credentials: 'include' })
           .then(readJsonResponse)
           .then(({ googleMapsApiKey }) => {
             if (!googleMapsApiKey) return null;
@@ -253,9 +253,10 @@
       submitButton.textContent = 'Saving...';
       formStatus.textContent = '';
       try {
-        const response = await fetch('/api/crop-registrations', {
+        const response = await fetch(`${apiBaseUrl}/api/crop-registrations`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify(Object.fromEntries(new FormData(cropForm))),
         });
         const result = await readJsonResponse(response);
