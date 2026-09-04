@@ -2,6 +2,7 @@ const path = require('node:path')
 require('dotenv').config({ path: path.resolve(__dirname, '.env') })
 const express = require('express')
 const session = require('express-session')
+const mongoose = require("mongoose");
 const MongoStore = require('connect-mongo')
 const { createCropRepository } = require('./crop-repository')
 const { createDatabase } = require('./database')
