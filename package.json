@@ -24,8 +24,10 @@
     "check": "node --check backend/server.js && node --check backend/crop-repository.js && node --check backend/database.js"
   },
   "dependencies": {
+    "connect-mongo": "^6.0.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
     "mongoose": "^9.9.4",
     "pg": "^8.23.0"
   },

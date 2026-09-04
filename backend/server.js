@@ -1,6 +1,8 @@
 const path = require('node:path')
 require('dotenv').config({ path: path.resolve(__dirname, '.env') })
 const express = require('express')
+const session = require('express-session')
+const MongoStore = require('connect-mongo')
 const { createCropRepository } = require('./crop-repository')
 const { createDatabase } = require('./database')
 const { createAuthRepository } = require('./auth-repository')
@@ -9,16 +11,56 @@ const app = express()
 const frontendRoot = path.resolve(__dirname, '..', 'frontend')
 const port = Number(process.env.PORT) || 3000
 const database = createDatabase()
+const sessionSecret = process.env.SESSION_SECRET
 
 if (process.env.NODE_ENV === 'production' && !database && process.env.ALLOW_MEMORY_STORAGE !== 'true') {
     throw new Error('MONGO_URI is required in production. Set ALLOW_MEMORY_STORAGE=true only for temporary testing.')
+}
+if (process.env.NODE_ENV === 'production' && (!sessionSecret || sessionSecret.length < 32)) {
+    throw new Error('SESSION_SECRET must be at least 32 characters in production.')
 }
 
 const cropRepository = createCropRepository(database || undefined)
 const authRepository = createAuthRepository(database || undefined)
 
+const protectedPagePrefixes = [
+    '/pages/dashboard/',
+    '/pages/register/',
+    '/pages/Account/',
+    '/pages/Queue/',
+    '/pages/orders/',
+    '/pages/payments/',
+]
+
+const requiresAuthentication = (request) => protectedPagePrefixes.some((prefix) => request.path.startsWith(prefix))
+
+const requireAuthentication = (request, response, next) => {
+    if (request.session.user) {
+        request.user = request.session.user
+        return next()
+    }
+    if (request.path.startsWith('/api/')) return response.status(401).json({ error: 'Authentication required.' })
+    response.redirect('/pages/login/index.html')
+}
+
 app.disable('x-powered-by')
 app.use(express.json({ limit: '1mb' }))
+app.use(session({
+    name: 'kisansetu.sid',
+    secret: sessionSecret || 'development-only-session-secret',
+    resave: false,
+    saveUninitialized: false,
+    store: database ? MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        collectionName: 'sessions',
+    }) : undefined,
+    cookie: {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 86400000,
+    },
+}))
 app.use((request, response, next) => {
     response.set({
         'X-Content-Type-Options': 'nosniff',
@@ -71,8 +113,7 @@ app.post('/api/auth/register', async (request, response) => {
             fullName: String(body.fullName).trim(), email: String(body.email || '').trim(), mobile: String(body.mobile).trim(),
             password: String(body.password), role: ['seller', 'buyer'].includes(body.role) ? body.role : 'seller', language: String(body.language || 'en'),
         })
-        const token = authRepository.createSession(user)
-        response.cookie('kisansetu_session', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 86400000 })
+        request.session.user = { id: user.id, fullName: user.fullName, role: user.role }
         response.status(200).json({ message: 'Account created.', user: { id: user.id, fullName: user.fullName, role: user.role } })
     } catch (error) {
         response.status(error.code === '23505' ? 409 : 400).json({ error: error.code === '23505' ? 'That mobile number or email is already registered.' : error.message })
@@ -86,8 +127,7 @@ app.post('/api/auth/login', async (request, response) => {
     try {
         const user = await authRepository.findByLogin(String(body.mobile).trim())
         if (!user || !(await authRepository.passwordMatches(String(body.password), user))) return response.status(401).json({ error: 'Incorrect login details.' })
-        const token = authRepository.createSession(user)
-        response.cookie('kisansetu_session', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 86400000 })
+        request.session.user = { id: user.id, fullName: user.fullName, role: user.role }
         response.json({ message: 'Login successful.', user: { id: user.id, fullName: user.fullName, role: user.role } })
     } catch (error) {
         response.status(400).json({ error: error.message })
@@ -95,11 +135,10 @@ app.post('/api/auth/login', async (request, response) => {
 })
 
 app.post('/api/auth/logout', (request, response) => {
-    response.clearCookie('kisansetu_session', { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' })
-    response.status(204).end()
+    request.session.destroy(() => response.status(204).end())
 })
 
-app.post('/api/crop-registrations', async (request, response) => {
+app.post('/api/crop-registrations', requireAuthentication, async (request, response) => {
     const body = request.body
     const validationError = validateCropRegistration(body)
     if (validationError) return response.status(400).json({ error: validationError })
@@ -115,6 +154,7 @@ app.post('/api/crop-registrations', async (request, response) => {
     }
 })
 
+app.use((request, response, next) => requiresAuthentication(request) ? requireAuthentication(request, response, next) : next())
 app.use(express.static(frontendRoot, { extensions: ['html'] }))
 app.use((request, response) => {
     if (request.path.startsWith('/api/')) return response.status(404).json({ error: 'API route not found.' })

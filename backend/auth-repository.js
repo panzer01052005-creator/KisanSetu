@@ -2,7 +2,6 @@ const crypto = require('node:crypto')
 const mongoose = require('mongoose')
 
 const users = []
-const sessions = new Map()
 const userSchema = new mongoose.Schema({
     fullName: { type: String, required: true, trim: true, maxlength: 120 },
     email: { type: String, trim: true, lowercase: true, unique: true, sparse: true, maxlength: 160 },
@@ -54,11 +53,6 @@ const createAuthRepository = (database = {}) => ({
         return verifyPassword(password, user.password_hash || user.passwordHash)
     },
 
-    createSession(user) {
-        const token = crypto.randomBytes(32).toString('hex')
-        sessions.set(token, { id: user.id, role: user.role, createdAt: Date.now() })
-        return token
-    },
 })
 
 module.exports = { createAuthRepository }

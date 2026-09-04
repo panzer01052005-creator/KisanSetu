@@ -28,6 +28,7 @@ PORT=3000
 MONGO_URI=mongodb+srv://user:password@cluster.mongodb.net/kisansetu
 ALLOW_MEMORY_STORAGE=false
 GOOGLE_MAPS_API_KEY=your-browser-restricted-google-maps-key
+SESSION_SECRET=replace-with-a-long-random-secret
 ```
 
 ## Google Maps setup
@@ -50,6 +51,8 @@ docker run -p 3000:3000 \
 ```
 
 Configure the same variables as protected secrets in your hosting provider. The `.dockerignore` file excludes `.env` files, including `backend/.env`, from the build context.
+
+`SESSION_SECRET` must be a random value of at least 32 characters. MongoDB deployments store Express sessions in the `sessions` collection; local memory mode uses Express's in-memory session store and is not suitable for production.
 
 `MONGODB_URI` is also accepted as an alias for `MONGO_URI`. A MongoDB Atlas API key is not a database connection string and cannot be used in either variable.
 
