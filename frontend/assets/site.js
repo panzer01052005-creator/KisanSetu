@@ -436,7 +436,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(Object.fromEntries(new FormData(form))),
                 })
-                const result = await response.json()
+                const responseText = await response.text()
+                let result = {}
+                if (responseText.trim()) {
+                    try {
+                        result = JSON.parse(responseText)
+                    } catch {
+                        throw new Error(`Server returned an invalid response (HTTP ${response.status}).`)
+                    }
+                }
                 if (!response.ok) throw new Error(result.error || 'Unable to continue.')
                 window.location.href = form.getAttribute('action') || '../dashboard/index.html'
             } catch (error) {

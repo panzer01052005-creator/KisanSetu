@@ -51,6 +51,8 @@ docker run -p 3000:3000 \
 
 Configure the same variables as protected secrets in your hosting provider. The `.dockerignore` file excludes `.env` files, including `backend/.env`, from the build context.
 
+`MONGODB_URI` is also accepted as an alias for `MONGO_URI`. A MongoDB Atlas API key is not a database connection string and cannot be used in either variable.
+
 The included `Dockerfile` starts the app as a non-root user. The platform should route its public port to the value of `PORT` and use `GET /api/health` as its health check. Do not set `ALLOW_MEMORY_STORAGE=true` in production because memory data is lost on restart.
 
 ## Database setup
