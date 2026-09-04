@@ -124,6 +124,37 @@ body {
     font: 600 20px 'Space Grotesk', sans-serif;
 }
 
+.history-status {
+    padding: 5px 8px;
+    border-radius: 4px;
+    color: var(--theme-muted);
+    background: #eef2ee;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.history-empty {
+    padding: 24px 22px 28px;
+}
+
+.history-empty p {
+    max-width: 560px;
+    margin: 0 0 18px;
+    color: var(--theme-muted);
+}
+
+.history-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 13px;
+    border-radius: 6px;
+    color: #fff;
+    background: var(--theme-green);
+    font-size: 12px;
+    font-weight: 700;
+}
+
 .filter-field {
     display: flex;
     align-items: center;

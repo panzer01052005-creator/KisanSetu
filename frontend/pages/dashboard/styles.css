@@ -275,6 +275,33 @@ body {
     box-shadow: var(--shadow);
 }
 
+.empty-history {
+    max-width: 760px;
+    margin-top: 28px;
+}
+
+.empty-history .pill {
+    color: var(--muted);
+    background: #f1f4f1;
+}
+
+.empty-history-text {
+    max-width: 560px;
+    margin: 0 0 20px;
+    color: var(--muted);
+}
+
+.empty-history-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 11px 15px;
+    border-radius: 8px;
+    color: #fff;
+    background: var(--primary);
+    font-weight: 700;
+}
+
 .panel-wide {
     grid-column: span 2;
 }
