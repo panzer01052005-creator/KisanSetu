@@ -45,6 +45,7 @@ docker run -p 3000:3000 \
 	-e NODE_ENV=production \
 	-e PORT=3000 \
 	-e MONGO_URI="$MONGO_URI" \
+	-e SESSION_SECRET="$SESSION_SECRET" \
 	-e ALLOW_MEMORY_STORAGE=false \
 	-e GOOGLE_MAPS_API_KEY="$GOOGLE_MAPS_API_KEY" \
 	kisansetu
