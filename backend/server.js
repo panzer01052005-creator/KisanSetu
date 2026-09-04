@@ -179,16 +179,19 @@ app.use((request, response) => {
 })
 
 let server
+const ready = database ? database.ready : Promise.resolve()
 const startServer = async () => {
     if (database) await database.ready
     server = app.listen(port, () => {
         console.log(`KisanSetu frontend available at http://localhost:${port}`)
     })
 }
-startServer().catch((error) => {
-    console.error(`Unable to start the server: ${error.message}`)
-    process.exitCode = 1
-})
+if (require.main === module) {
+    startServer().catch((error) => {
+        console.error(`Unable to start the server: ${error.message}`)
+        process.exitCode = 1
+    })
+}
 
 const shutdown = async () => {
     if (server) server.close()
@@ -198,4 +201,4 @@ const shutdown = async () => {
 process.on('SIGTERM', shutdown)
 process.on('SIGINT', shutdown)
 
-module.exports = { app, server }
+module.exports = { app, ready, server }

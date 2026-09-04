@@ -1,15 +1,11 @@
-const mongoose = require('mongoose')
-const { mongoUri } = require('./config')
+const { app, ready } = require('../backend/server')
 
-const startServer = async () => {
-	if (mongoUri) {
-		await mongoose.connect(mongoUri)
-		console.log('Connected to MongoDB')
-	}
-	require('../backend/server')
+module.exports = async (request, response) => {
+    try {
+        await ready
+        return app(request, response)
+    } catch (error) {
+        console.error('Unable to connect to MongoDB:', error.message)
+        return response.status(503).json({ error: 'Database unavailable.' })
+    }
 }
-
-startServer().catch((error) => {
-	console.error('Unable to connect to MongoDB:', error.message)
-	process.exitCode = 1
-})
