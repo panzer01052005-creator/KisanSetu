@@ -52,6 +52,7 @@ const requireAuthentication = (request, response, next) => {
 
 app.disable('x-powered-by')
 app.use(express.json({ limit: '1mb' }))
+app.use(express.urlencoded({ extended: true }))
 app.use((request, response, next) => {
     const origin = request.get('Origin')
     const isCodespacesLiveServer = /^https:\/\/.+-5501\.app\.github\.dev$/.test(origin || '')
