@@ -20,15 +20,15 @@
   "type": "commonjs",
   "main": "src/index.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "check": "node --check backend/server.js && node --check backend/crop-repository.js && node --check backend/database.js"
+    "start": "node src/index.js",
+    "check": "node --check src/index.js && node --check backend/server.js && node --check backend/crop-repository.js && node --check backend/database.js"
   },
   "dependencies": {
     "connect-mongo": "^6.0.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
-    "mongoose": "^9.9.4",
+    "mongoose": "^9.9.5",
     "pg": "^8.23.0"
   },
   "engines": {
