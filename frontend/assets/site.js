@@ -437,11 +437,12 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault()
             const submitButton = form.querySelector('button[type="submit"]')
             const action = form.dataset.authAction
+            const requestUrl = `${apiBaseUrl}/api/auth/${action}`
             const originalText = submitButton.textContent
             submitButton.disabled = true
             submitButton.textContent = action === 'register' ? 'Creating account...' : 'Signing in...'
             try {
-                const response = await fetch(`${apiBaseUrl}/api/auth/${action}`, {
+                const response = await fetch(requestUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -456,10 +457,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         throw new Error(`Server returned an invalid response (HTTP ${response.status}).`)
                     }
                 }
-                if (!response.ok) throw new Error(result.error || 'Unable to continue.')
+                if (!response.ok) throw new Error(result.error || result.message || `Unable to continue (HTTP ${response.status}).`)
                 window.location.href = form.getAttribute('action') || '../dashboard/index.html'
             } catch (error) {
-                showToast(error.message)
+                console.error('Authentication request failed.', { action, url: requestUrl, error })
+                showToast(error.message || 'Unable to continue.')
                 submitButton.disabled = false
                 submitButton.textContent = originalText
             }

@@ -20,8 +20,8 @@
   "type": "commonjs",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "check": "node --check src/index.js && node --check backend/server.js && node --check backend/crop-repository.js && node --check backend/database.js"
+    "start": "node backend/server.js",
+    "check": "node --check api/index.js && node --check src/index.js && node --check backend/server.js && node --check backend/crop-repository.js && node --check backend/database.js"
   },
   "dependencies": {
     "connect-mongo": "^6.0.0",

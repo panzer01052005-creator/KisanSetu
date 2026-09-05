@@ -1,5 +1,7 @@
 const path = require('node:path')
-require('dotenv').config({ path: path.resolve(__dirname, '.env') })
+const dotenv = require('dotenv')
+dotenv.config({ path: path.resolve(__dirname, '..', '.env') })
+dotenv.config({ path: path.resolve(__dirname, '.env') })
 const express = require('express')
 const session = require('express-session')
 const { MongoStore } = require('connect-mongo')
@@ -14,8 +16,8 @@ const database = createDatabase()
 const sessionSecret = process.env.SESSION_SECRET
 const configuredFrontendOrigins = (process.env.FRONTEND_ORIGINS || '').split(',').map((origin) => origin.trim()).filter(Boolean)
 
-if (process.env.NODE_ENV === 'production' && !database && process.env.ALLOW_MEMORY_STORAGE !== 'true') {
-    throw new Error('MONGO_URI is required in production. Set ALLOW_MEMORY_STORAGE=true only for temporary testing.')
+if (process.env.NODE_ENV === 'production' && (!process.env.MONGO_URI || process.env.ALLOW_MEMORY_STORAGE !== 'false')) {
+    throw new Error('Production requires MONGO_URI and ALLOW_MEMORY_STORAGE=false.')
 }
 if (process.env.NODE_ENV === 'production' && (!sessionSecret || sessionSecret.length < 32)) {
     throw new Error('SESSION_SECRET must be at least 32 characters in production.')
@@ -23,6 +25,10 @@ if (process.env.NODE_ENV === 'production' && (!sessionSecret || sessionSecret.le
 
 const cropRepository = createCropRepository(database || undefined)
 const authRepository = createAuthRepository(database || undefined)
+const sessionClientPromise = database ? database.ready.then(
+    () => database.connection.getClient(),
+    () => new Promise(() => {}),
+) : null
 
 const protectedPagePrefixes = [
     '/pages/dashboard/',
@@ -67,8 +73,8 @@ app.use(session({
     secret: sessionSecret || 'development-only-session-secret',
     resave: false,
     saveUninitialized: false,
-    store: database ? MongoStore.create({
-        mongoUrl: process.env.MONGO_URI,
+    store: sessionClientPromise ? MongoStore.create({
+        clientPromise: sessionClientPromise,
         collectionName: 'sessions',
     }) : undefined,
     cookie: {
