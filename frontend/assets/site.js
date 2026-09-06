@@ -329,9 +329,9 @@ document.addEventListener('DOMContentLoaded', () => {
         aiAssistant.className = 'ai-assistant'
         aiAssistant.setAttribute('aria-labelledby', 'ai-assistant-title')
         aiAssistant.innerHTML = `
-            <h2 id="ai-assistant-title">🌾 KisanSetu AI</h2>
-            <textarea id="aiMessage" placeholder="Ask KisanSetu anything..." aria-label="Ask KisanSetu AI"></textarea>
-            <button id="askAI" type="button">Ask AI</button>
+            <h2 id="ai-assistant-title">🌾 KisanSathi</h2>
+            <textarea id="aiMessage" placeholder="Ask KisanSathi anything..." aria-label="Ask KisanSathi"></textarea>
+            <button id="askAI" type="button">Ask KisanSathi</button>
             <div id="aiResponse" role="status" aria-live="polite"></div>
             <div class="voice-assistant">
                 <select id="languageSelect" aria-label="Select voice language">
@@ -362,6 +362,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const aiMessage = document.getElementById('aiMessage')
     const askAI = document.getElementById('askAI')
     const aiResponse = document.getElementById('aiResponse')
+    document.querySelectorAll('[data-ai-prompt]').forEach((promptButton) => {
+        promptButton.addEventListener('click', () => {
+            if (!aiMessage) return
+            aiMessage.value = promptButton.dataset.aiPrompt
+            aiMessage.focus()
+        })
+    })
     if (aiMessage && askAI && aiResponse && !document.querySelector('script[src="/ai-assistant.js"]')) {
         askAI.addEventListener('click', async () => {
             const message = aiMessage.value.trim()
@@ -434,6 +441,34 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     })
 
+    const themeToggle = document.querySelector('.theme-toggle')
+    const applyTheme = (theme) => {
+        const isNight = theme === 'night'
+        document.body.classList.toggle('night-mode', isNight)
+        if (!themeToggle) return
+        themeToggle.setAttribute('aria-pressed', String(isNight))
+        themeToggle.setAttribute('aria-label', isNight ? 'Switch to day mode' : 'Switch to night mode')
+        themeToggle.innerHTML = isNight ? '☀ <span>Day</span>' : '☾ <span>Night</span>'
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const nextTheme = document.body.classList.contains('night-mode') ? 'day' : 'night'
+            applyTheme(nextTheme)
+            try {
+                localStorage.setItem('kisansetu-theme', nextTheme)
+            } catch (error) {
+            }
+        })
+    }
+
+    let savedTheme = 'day'
+    try {
+        savedTheme = localStorage.getItem('kisansetu-theme') || 'day'
+    } catch (error) {
+    }
+    applyTheme(savedTheme)
+
     let savedLanguage = 'en'
     try {
         savedLanguage = localStorage.getItem('kisansetu-language') || 'en'
@@ -501,6 +536,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('form').forEach((form) => {
         form.addEventListener('submit', async (event) => {
+            if (form.id === 'feedback-form') {
+                event.preventDefault()
+                const status = document.getElementById('feedback-status')
+                const submitButton = form.querySelector('button[type="submit"]')
+                submitButton.disabled = true
+                status.textContent = 'Thank you for helping us improve KisanSetu.'
+                form.reset()
+                setTimeout(() => {
+                    submitButton.disabled = false
+                }, 1200)
+                return
+            }
             if (!form.classList.contains('auth-api-form')) return
             event.preventDefault()
             const submitButton = form.querySelector('button[type="submit"]')

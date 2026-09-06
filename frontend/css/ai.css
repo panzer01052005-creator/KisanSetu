@@ -15,7 +15,6 @@
 }
 
 body {
-    min-width: 320px;
     margin: 0;
     color: var(--ink);
     background: radial-gradient(circle at 8% 6%, #e4f0df 0, transparent 28%), var(--cream);

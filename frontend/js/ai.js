@@ -18,7 +18,7 @@ const speakAnswer = (text) => {
 }
 
 const askKisanSetuAI = async (message) => {
-    voiceStatus.textContent = '🤖 KisanSetu AI is thinking...'
+    voiceStatus.textContent = '🤖 KisanSathi is thinking...'
     aiVoiceResponse.textContent = 'Thinking...'
 
     try {
@@ -39,7 +39,7 @@ const askKisanSetuAI = async (message) => {
         speakAnswer(data.answer)
     } catch (error) {
         console.error('AI request failed:', error)
-        aiVoiceResponse.textContent = 'Unable to connect to KisanSetu AI.'
+        aiVoiceResponse.textContent = 'Unable to connect to KisanSathi.'
         voiceStatus.textContent = '❌ AI request failed.'
     }
 }

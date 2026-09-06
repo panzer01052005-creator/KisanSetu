@@ -15,6 +15,7 @@ const openai = process.env.OPENAI_API_KEY
         apiKey: process.env.OPENAI_API_KEY
     })
     : null
+const openaiModel = process.env.OPENAI_MODEL || 'gpt-4o-mini'
 
 const app = express()
 const frontendRoot = path.resolve(__dirname, '..', 'frontend')
@@ -236,9 +237,9 @@ app.post('/api/ai/chat', async (request, response) => {
         }
 
         const result = await openai.responses.create({
-            model: 'gpt-5.6-luna',
+            model: openaiModel,
             instructions: `
-You are KisanSetu AI.
+You are KisanSathi.
 
 You help Indian farmers with:
 1. Crop registration.

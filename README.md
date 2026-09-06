@@ -53,6 +53,8 @@ docker run -p 3000:3000 \
 
 Configure the same variables as protected secrets in your hosting provider. The `.dockerignore` file excludes `.env` files, including `backend/.env`, from the build context.
 
+The KisanSathi assistant uses the OpenAI API from the backend. Set `OPENAI_API_KEY` as a protected environment variable; never place the key in frontend files or commit it to the repository. The optional `OPENAI_MODEL` variable defaults to `gpt-4o-mini`.
+
 `SESSION_SECRET` must be a random value of at least 32 characters. MongoDB deployments store Express sessions in the `sessions` collection; local memory mode uses Express's in-memory session store and is not suitable for production.
 
 `MONGODB_URI` is also accepted as an alias for `MONGO_URI`. A MongoDB Atlas API key is not a database connection string and cannot be used in either variable.

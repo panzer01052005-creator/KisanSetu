@@ -82,7 +82,7 @@ if (!SpeechRecognition) {
         userSpeech.textContent = text
 
         voiceStatus.textContent =
-            '🤖 KisanSetu AI is thinking...'
+            '🤖 KisanSathi is thinking...'
 
         await askKisanSetuAI(text)
     }

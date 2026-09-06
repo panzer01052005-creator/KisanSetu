@@ -37,7 +37,7 @@ askButton.addEventListener('click', async () => {
     } catch (error) {
         console.error('AI request failed:', error)
         responseBox.textContent =
-            'Unable to connect to KisanSetu AI.'
+            'Unable to connect to KisanSathi.'
     } finally {
         askButton.disabled = false
     }
