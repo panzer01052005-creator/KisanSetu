@@ -2,12 +2,19 @@ const path = require('node:path')
 const dotenv = require('dotenv')
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') })
 dotenv.config({ path: path.resolve(__dirname, '.env') })
+const OpenAI = require('openai')
 const express = require('express')
 const session = require('express-session')
 const { MongoStore } = require('connect-mongo')
 const { createCropRepository } = require('./crop-repository')
 const { createDatabase } = require('./database')
 const { createAuthRepository } = require('./auth-repository')
+
+const openai = process.env.OPENAI_API_KEY
+    ? new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY
+    })
+    : null
 
 const app = express()
 const frontendRoot = path.resolve(__dirname, '..', 'frontend')
@@ -168,6 +175,7 @@ app.post('/api/crop-registrations', requireAuthentication, async (request, respo
     if (validationError) return response.status(400).json({ error: validationError })
     try {
         const registration = await cropRepository.create({
+            userId: request.user.id,
             crop: body.crop === 'Other' ? String(body.otherCrop).trim() : String(body.crop).trim(),
             quantity: Number(body.quantity), unit: String(body.unit), center: String(body.center).trim(),
             address: String(body.address).trim(), district: String(body.district).trim(), pincode: String(body.pincode),
@@ -175,6 +183,107 @@ app.post('/api/crop-registrations', requireAuthentication, async (request, respo
         response.status(201).json({ message: 'Crop registration received.', registration })
     } catch (error) {
         response.status(400).json({ error: error.message || 'Unable to save crop registration.' })
+    }
+})
+
+app.get('/api/crop-registrations/mine', requireAuthentication, async (request, response) => {
+    try {
+        const registrations = await cropRepository.findByUserId(request.user.id)
+        response.json({ registrations })
+    } catch (error) {
+        console.error('Unable to load crop registrations:', error)
+        response.status(500).json({ error: 'Unable to load your crop registrations.' })
+    }
+})
+
+app.post('/api/ai/chat', async (request, response) => {
+    try {
+        if (!request.session.user) {
+            return response.status(401).json({
+                error: 'Please login first.'
+            })
+        }
+
+        const userId = request.session.user.id
+
+        if (!openai) {
+            return response.status(503).json({
+                error: 'AI service is not configured.'
+            })
+        }
+
+        const { message, language } = request.body
+
+        if (!message || typeof message !== 'string') {
+            return response.status(400).json({
+                error: 'Message is required.'
+            })
+        }
+
+        const selectedLanguage = language || 'no preferred language'
+        const asksAboutRegistrationStatus = /(registration|procurement|status|crop|फसल|पंजीकरण|स्थिति|खरीद)/iu.test(message)
+        let registrationContext = 'No registration data was requested.'
+
+        if (asksAboutRegistrationStatus) {
+            if (!request.session.user) {
+                registrationContext = 'The user is not authenticated. Ask them to log in before checking private registration status.'
+            } else {
+                const registrations = await cropRepository.findByUserId(userId)
+                registrationContext = registrations.length
+                    ? JSON.stringify(registrations.map(({ id, crop, quantity, unit, center, status, createdAt }) => ({ id, crop, quantity, unit, center, status, createdAt })))
+                    : 'No crop registrations were found for this authenticated user.'
+            }
+        }
+
+        const result = await openai.responses.create({
+            model: 'gpt-5.6-luna',
+            instructions: `
+You are KisanSetu AI.
+
+You help Indian farmers with:
+1. Crop registration.
+2. Procurement information.
+3. Government agricultural schemes.
+4. Crop-related general information.
+5. Mandi information.
+6. Basic farming guidance.
+7. Documentation guidance.
+8. KisanSetu website navigation.
+
+Rules:
+- Detect the language used in the user's message and answer in that same language.
+- The client language preference is ${selectedLanguage}; use it as a hint only when it matches the user's message.
+- If the user speaks Hindi, answer in Hindi.
+- If the user speaks English, answer in English.
+- If the user uses another supported language, answer in that language.
+- Always communicate clearly using simple language.
+- Keep answers practical and concise.
+- Do not invent live mandi prices.
+- Do not invent procurement schedules.
+- If information is uncertain or location-specific, clearly say so.
+- Do not claim that a government scheme exists unless you have reliable information.
+- For medical, pesticide, fertilizer, or other safety-sensitive questions, give cautious general information and recommend consulting an appropriate qualified professional when necessary.
+
+Private backend context for this request:
+${registrationContext}
+- Use this context only to answer the authenticated user's own registration-status question.
+- Never claim a registration status that is not present in this context.
+- Never reveal private registration data to an unauthenticated user.
+`,
+            input: message
+        })
+
+        response.json({
+            success: true,
+            answer: result.output_text
+        })
+
+    } catch (error) {
+        console.error('AI error:', error)
+
+        response.status(500).json({
+            error: 'Unable to get AI response.'
+        })
     }
 })
 

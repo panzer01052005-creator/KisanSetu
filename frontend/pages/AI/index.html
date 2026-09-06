@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="KisanSetu AI, a multilingual agricultural assistant for farmers.">
+  <title>KisanSetu AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/ai.css">
+  <script src="../../js/ai.js" defer></script>
+</head>
+<body>
+  <main class="ai-page">
+    <a class="ai-back-link" href="../home/index.html">← Back to KisanSetu</a>
+
+    <section class="ai-shell" aria-labelledby="ai-title">
+      <header class="ai-header">
+        <div class="ai-mark" aria-hidden="true">🌾</div>
+        <p class="ai-kicker">KisanSetu</p>
+        <h1 id="ai-title">KisanSetu AI</h1>
+        <p class="ai-subtitle">आपका डिजिटल कृषि सहायक</p>
+        <p class="ai-description">Ask about crops, preparation, documents, or your next step at the collection center.</p>
+      </header>
+
+      <div class="ai-controls">
+        <label for="languageSelect">Response language</label>
+        <select id="languageSelect">
+          <option value="hi-IN">हिन्दी</option>
+          <option value="en-IN">English</option>
+          <option value="bn-IN">বাংলা</option>
+          <option value="mr-IN">मराठी</option>
+          <option value="gu-IN">ગુજરાતી</option>
+          <option value="pa-IN">ਪੰਜਾਬੀ</option>
+          <option value="ta-IN">தமிழ்</option>
+          <option value="te-IN">తెలుగు</option>
+        </select>
+      </div>
+
+      <div class="ai-conversation" aria-live="polite">
+        <div class="message-block user-message">
+          <span class="message-label">You</span>
+          <p id="userSpeech">Your question will appear here.</p>
+        </div>
+        <div class="message-block assistant-message">
+          <span class="message-label">🤖 KisanSetu AI</span>
+          <p id="aiVoiceResponse">Your answer will appear here.</p>
+        </div>
+      </div>
+
+      <div class="voice-panel">
+        <button id="startVoice" class="voice-button" type="button">
+          <span class="voice-icon" aria-hidden="true">🎤</span>
+          <span>Tap to speak</span>
+        </button>
+        <p id="voiceStatus">Tap the microphone and speak.</p>
+      </div>
+
+      <div class="text-panel">
+        <label for="aiMessage">Or type your question</label>
+        <div class="text-entry">
+          <textarea id="aiMessage" rows="3" placeholder="Ask KisanSetu anything..."></textarea>
+          <button id="askAI" type="button">Ask AI <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+
+      <p class="ai-note">For practical guidance. Always confirm local prices, weather, and official scheme details.</p>
+    </section>
+  </main>
+</body>
+</html>

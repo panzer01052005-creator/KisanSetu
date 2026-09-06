@@ -323,6 +323,74 @@ document.addEventListener('DOMContentLoaded', () => {
         toastTimer = setTimeout(() => toast.classList.remove('visible'), 3200)
     }
 
+    let aiAssistant = document.querySelector('.ai-assistant')
+    if (!aiAssistant) {
+        aiAssistant = document.createElement('section')
+        aiAssistant.className = 'ai-assistant'
+        aiAssistant.setAttribute('aria-labelledby', 'ai-assistant-title')
+        aiAssistant.innerHTML = `
+            <h2 id="ai-assistant-title">🌾 KisanSetu AI</h2>
+            <textarea id="aiMessage" placeholder="Ask KisanSetu anything..." aria-label="Ask KisanSetu AI"></textarea>
+            <button id="askAI" type="button">Ask AI</button>
+            <div id="aiResponse" role="status" aria-live="polite"></div>
+            <div class="voice-assistant">
+                <select id="languageSelect" aria-label="Select voice language">
+                    <option value="hi-IN">हिन्दी</option>
+                    <option value="en-IN">English</option>
+                    <option value="bn-IN">বাংলা</option>
+                    <option value="mr-IN">मराठी</option>
+                    <option value="gu-IN">ગુજરાતી</option>
+                    <option value="pa-IN">ਪੰਜਾਬੀ</option>
+                    <option value="ta-IN">தமிழ்</option>
+                    <option value="te-IN">తెలుగు</option>
+                </select>
+                <button id="startVoice" type="button">🎤 Talk to KisanSetu</button>
+                <p id="voiceStatus">Tap the microphone and speak.</p>
+                <div id="userSpeech"></div>
+                <div id="aiVoiceResponse"></div>
+            </div>
+        `
+        document.body.appendChild(aiAssistant)
+    }
+
+    if (!document.querySelector('script[src="/voice-assistant.js"]')) {
+        const voiceScript = document.createElement('script')
+        voiceScript.src = '/voice-assistant.js'
+        document.body.appendChild(voiceScript)
+    }
+
+    const aiMessage = document.getElementById('aiMessage')
+    const askAI = document.getElementById('askAI')
+    const aiResponse = document.getElementById('aiResponse')
+    if (aiMessage && askAI && aiResponse && !document.querySelector('script[src="/ai-assistant.js"]')) {
+        askAI.addEventListener('click', async () => {
+            const message = aiMessage.value.trim()
+            if (!message) {
+                aiResponse.textContent = 'Please enter a question first.'
+                aiMessage.focus()
+                return
+            }
+
+            askAI.disabled = true
+            aiResponse.textContent = 'Thinking...'
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/ai/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ message }),
+                })
+                const result = await response.json()
+                if (!response.ok) throw new Error(result.error || 'Unable to get an AI response.')
+                aiResponse.textContent = result.answer || 'No answer was returned.'
+            } catch (error) {
+                aiResponse.textContent = error.message || 'Unable to get an AI response.'
+            } finally {
+                askAI.disabled = false
+            }
+        })
+    }
+
     const applyLanguage = (lang) => {
         const selected = translations[lang] || translations.en
         document.querySelectorAll('[data-i18n]').forEach((element) => {

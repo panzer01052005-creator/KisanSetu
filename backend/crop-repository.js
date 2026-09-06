@@ -1,6 +1,7 @@
 const registrations = []
 const mongoose = require('mongoose')
 const cropRegistrationSchema = new mongoose.Schema({
+    userId: { type: String, required: true, index: true },
     crop: { type: String, required: true, trim: true, maxlength: 120 },
     quantity: { type: Number, required: true, min: 0 },
     unit: { type: String, enum: ['kg', 'quintal', 'ton'], required: true },
@@ -31,6 +32,21 @@ const createCropRepository = (database = {}) => ({
         }
         registrations.push(created)
         return created
+    },
+
+    async findByUserId(userId) {
+        if (database.type === 'mongodb') {
+            const records = await CropRegistration.find({ userId }).sort({ createdAt: -1 }).lean()
+            return records.map((record) => ({
+                id: record._id.toString(), crop: record.crop, quantity: record.quantity, unit: record.unit,
+                center: record.center, address: record.address, district: record.district, pincode: record.pincode,
+                status: record.status, createdAt: record.createdAt.toISOString(),
+            }))
+        }
+
+        return registrations
+            .filter((registration) => registration.userId === userId)
+            .sort((first, second) => new Date(second.createdAt) - new Date(first.createdAt))
     },
 })
 
