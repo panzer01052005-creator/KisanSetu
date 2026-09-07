@@ -583,6 +583,23 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     })
 
+    document.querySelectorAll('[data-auth-logout]').forEach((logoutLink) => {
+        logoutLink.addEventListener('click', async (event) => {
+            event.preventDefault()
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/auth/logout`, {
+                    method: 'POST',
+                    credentials: 'include',
+                })
+                if (!response.ok) throw new Error(`HTTP ${response.status}`)
+            } catch (error) {
+                console.error('Logout request failed.', error)
+            } finally {
+                window.location.assign(logoutLink.href)
+            }
+        })
+    })
+
     const mobileMenu = document.querySelector('.mobile-menu')
     const mainNav = document.querySelector('.main-nav')
     if (mobileMenu && mainNav) {

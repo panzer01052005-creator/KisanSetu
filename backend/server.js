@@ -148,7 +148,8 @@ app.post('/api/auth/register', async (request, response) => {
         request.session.user = { id: user.id, fullName: user.fullName, role: user.role }
         response.status(200).json({ message: 'Account created.', user: { id: user.id, fullName: user.fullName, role: user.role } })
     } catch (error) {
-        response.status(error.code === '23505' ? 409 : 400).json({ error: error.code === '23505' ? 'That mobile number or email is already registered.' : error.message })
+        const isDuplicateUser = error.code === 'DUPLICATE_USER' || error.code === 11000 || error.code === '23505'
+        response.status(isDuplicateUser ? 409 : 400).json({ error: isDuplicateUser ? 'That mobile number or email is already registered.' : error.message })
     }
 })
 
@@ -166,8 +167,12 @@ app.post('/api/auth/login', async (request, response) => {
     }
 })
 
-app.post('/api/auth/logout', (request, response) => {
-    request.session.destroy(() => response.status(204).end())
+app.post('/api/auth/logout', (request, response, next) => {
+    request.session.destroy((error) => {
+        if (error) return next(error)
+        response.clearCookie('kisansetu.sid')
+        response.status(204).end()
+    })
 })
 
 app.post('/api/crop-registrations', requireAuthentication, async (request, response) => {
