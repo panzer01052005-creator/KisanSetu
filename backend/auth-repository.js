@@ -2,6 +2,11 @@ const crypto = require('node:crypto')
 const mongoose = require('mongoose')
 
 const users = []
+const duplicateUserError = () => {
+    const error = new Error('That mobile number or email is already registered.')
+    error.code = 'DUPLICATE_USER'
+    return error
+}
 const userSchema = new mongoose.Schema({
     fullName: { type: String, required: true, trim: true, maxlength: 120 },
     email: { type: String, trim: true, lowercase: true, unique: true, sparse: true, maxlength: 160 },
@@ -33,11 +38,17 @@ const verifyPassword = (password, storedHash) => new Promise((resolve, reject) =
 const createAuthRepository = (database = {}) => ({
     async createUser({ fullName, email, mobile, password, role, language }) {
         const passwordHash = await hashPassword(password)
+        const normalizedEmail = email ? email.trim().toLowerCase() : undefined
+        const normalizedMobile = mobile.trim()
         if (database.type === 'mongodb') {
-            const user = await User.create({ fullName, email: email || undefined, mobile, passwordHash, role, language })
+            const user = await User.create({ fullName, email: normalizedEmail, mobile: normalizedMobile, passwordHash, role, language })
             return { id: user.id, fullName: user.fullName, email: user.email, mobile: user.mobile, role: user.role, language: user.language }
         }
-        const user = { id: `USR-${String(users.length + 1).padStart(4, '0')}`, fullName, email, mobile, passwordHash, role, language }
+        const hasDuplicate = users.some((user) => user.mobile === normalizedMobile
+            || (normalizedEmail && user.email === normalizedEmail))
+        if (hasDuplicate) throw duplicateUserError()
+
+        const user = { id: `USR-${String(users.length + 1).padStart(4, '0')}`, fullName, email: normalizedEmail, mobile: normalizedMobile, passwordHash, role, language }
         users.push(user)
         return user
     },
