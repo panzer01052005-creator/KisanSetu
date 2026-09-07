@@ -21,7 +21,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node backend/server.js",
-    "check": "node --check api/index.js && node --check src/index.js && node --check backend/server.js && node --check backend/auth-repository.js && node --check backend/crop-repository.js && node --check backend/database.js",
+    "check": "node --check api/index.js && node --check src/index.js && node --check backend/server.js && node --check backend/auth-repository.js && node --check backend/crop-repository.js && node --check backend/database.js && node --check backend/environment.js",
     "test": "node --test"
   },
   "dependencies": {

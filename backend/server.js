@@ -9,6 +9,7 @@ const { MongoStore } = require('connect-mongo')
 const { createCropRepository } = require('./crop-repository')
 const { createDatabase } = require('./database')
 const { createAuthRepository } = require('./auth-repository')
+const { resolveMongoUri, validateProductionConfiguration } = require('./environment')
 
 const openai = process.env.OPENAI_API_KEY
     ? new OpenAI({
@@ -20,16 +21,12 @@ const openaiModel = process.env.OPENAI_MODEL || 'gpt-4o-mini'
 const app = express()
 const frontendRoot = path.resolve(__dirname, '..', 'frontend')
 const port = Number(process.env.PORT) || 3000
+const mongoUri = resolveMongoUri()
+if (mongoUri) process.env.MONGO_URI = mongoUri
+validateProductionConfiguration()
 const database = createDatabase()
 const sessionSecret = process.env.SESSION_SECRET
 const configuredFrontendOrigins = (process.env.FRONTEND_ORIGINS || '').split(',').map((origin) => origin.trim()).filter(Boolean)
-
-if (process.env.NODE_ENV === 'production' && (!process.env.MONGO_URI || process.env.ALLOW_MEMORY_STORAGE !== 'false')) {
-    throw new Error('Production requires MONGO_URI and ALLOW_MEMORY_STORAGE=false.')
-}
-if (process.env.NODE_ENV === 'production' && (!sessionSecret || sessionSecret.length < 32)) {
-    throw new Error('SESSION_SECRET must be at least 32 characters in production.')
-}
 
 const cropRepository = createCropRepository(database || undefined)
 const authRepository = createAuthRepository(database || undefined)
