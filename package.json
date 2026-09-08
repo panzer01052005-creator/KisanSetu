@@ -18,10 +18,10 @@
   "license": "ISC",
   "author": "Abhishek kumar",
   "type": "commonjs",
-  "main": "src/index.js",
+  "main": "src/index.cjs",
   "scripts": {
     "start": "node backend/server.js",
-    "check": "node --check api/index.js && node --check src/index.js && node --check backend/server.js && node --check backend/auth-repository.js && node --check backend/crop-repository.js && node --check backend/database.js && node --check backend/environment.js",
+    "check": "node --check api/index.js && node --check src/index.cjs && node --check src/index.js && node --check backend/server.js && node --check backend/auth-repository.js && node --check backend/crop-repository.js && node --check backend/database.js && node --check backend/environment.js",
     "test": "node --test"
   },
   "dependencies": {
