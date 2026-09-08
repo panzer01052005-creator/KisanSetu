@@ -18,6 +18,10 @@
       const greetingElement = document.getElementById('dashboard-greeting');
       const nameElement = document.getElementById('user-full-name');
       const languageSelect = document.querySelector('.language-select');
+      const registrationList = document.getElementById('registration-list');
+      const registrationEmptyState = document.getElementById('registration-empty-state');
+      const registrationCount = document.getElementById('registration-count');
+      const registrationLoadError = document.getElementById('registration-load-error');
 
       const getSalutation = (lang = 'en') => {
         const hour = new Date().getHours();
@@ -55,6 +59,53 @@
           updateGreeting(event.target.value);
         });
       }
+
+      const formatRegisteredAt = (value) => {
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? 'Date unavailable' : date.toLocaleDateString(undefined, {
+          day: 'numeric', month: 'short', year: 'numeric',
+        });
+      };
+
+      const renderRegistrations = (registrations) => {
+        registrationCount.textContent = `${registrations.length} ${registrations.length === 1 ? 'record' : 'records'}`;
+        registrationList.replaceChildren();
+        registrationEmptyState.hidden = registrations.length > 0;
+
+        registrations.forEach((registration) => {
+          const item = document.createElement('article');
+          item.className = 'registration-item';
+
+          const details = document.createElement('div');
+          const title = document.createElement('h3');
+          title.textContent = registration.crop;
+          const meta = document.createElement('p');
+          meta.textContent = `${registration.quantity} ${registration.unit} · ${registration.center}`;
+          const submitted = document.createElement('small');
+          submitted.textContent = `Registered ${formatRegisteredAt(registration.createdAt)}`;
+          details.append(title, meta, submitted);
+
+          const status = document.createElement('span');
+          status.className = 'pill success';
+          status.textContent = registration.status || 'pending';
+          item.append(details, status);
+          registrationList.append(item);
+        });
+      };
+
+      const loadRegistrations = async () => {
+        try {
+          const response = await fetch(`${apiBaseUrl}/api/crop-registrations/mine`, { credentials: 'include' });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || 'Unable to load your crop registrations.');
+          renderRegistrations(result.registrations || []);
+        } catch (error) {
+          registrationLoadError.hidden = false;
+          registrationLoadError.textContent = 'We could not load your crop registrations. Please refresh and try again.';
+        }
+      };
+
+      loadRegistrations();
     });
   </script>
 </head>
@@ -125,16 +176,20 @@
         </div>
       </header>
 
-      <section class="empty-history panel" aria-labelledby="history-title">
+      <section class="registrations panel" aria-labelledby="history-title">
         <div class="panel-header">
           <div>
             <p class="eyebrow">History</p>
-            <h2 id="history-title">No crop history yet</h2>
+            <h2 id="history-title">Your crop registrations</h2>
           </div>
-          <span class="pill">No records</span>
+          <span class="pill" id="registration-count">Loading...</span>
         </div>
-        <p class="empty-history-text">Your crop submissions, queue updates, procurement, and payments will appear here after you register a crop.</p>
-        <a class="empty-history-action" href="../register/index.html">Register your first crop <span aria-hidden="true">→</span></a>
+        <p class="registration-load-error" id="registration-load-error" role="alert" hidden></p>
+        <div class="registration-list" id="registration-list" aria-live="polite"></div>
+        <div class="empty-history" id="registration-empty-state">
+          <p class="empty-history-text">Your crop submissions, queue updates, procurement, and payments will appear here after you register a crop.</p>
+          <a class="empty-history-action" href="../register/index.html">Register your first crop <span aria-hidden="true">→</span></a>
+        </div>
       </section>
     </main>
   </div>

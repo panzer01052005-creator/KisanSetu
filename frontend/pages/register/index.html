@@ -263,7 +263,12 @@
         if (!response.ok) throw new Error(result.error || 'Unable to register crop.');
         formStatus.className = 'form-status success';
         formStatus.textContent = `Crop registered successfully. Registration ID: ${result.registration.id}`;
-        submitButton.textContent = 'Crop registered';
+        submitButton.textContent = 'Crop registered — view dashboard';
+        submitButton.type = 'button';
+        submitButton.disabled = false;
+        submitButton.onclick = () => {
+          window.location.href = '../dashboard/index.html';
+        };
       } catch (error) {
         formStatus.className = 'form-status error';
         formStatus.textContent = error.message;

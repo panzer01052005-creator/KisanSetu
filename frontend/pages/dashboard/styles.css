@@ -275,14 +275,60 @@ body {
     box-shadow: var(--shadow);
 }
 
-.empty-history {
+.registrations {
     max-width: 760px;
     margin-top: 28px;
 }
 
-.empty-history .pill {
+.registrations .pill {
     color: var(--muted);
     background: #f1f4f1;
+}
+
+.registration-list {
+    display: grid;
+    gap: 12px;
+}
+
+.registration-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: linear-gradient(180deg, #fbfcfb 0%, #f3f8f4 100%);
+}
+
+.registration-item h3,
+.registration-item p {
+    margin: 0;
+}
+
+.registration-item h3 {
+    font-size: 1rem;
+}
+
+.registration-item p,
+.registration-item small {
+    color: var(--muted);
+}
+
+.registration-item p {
+    margin-top: 4px;
+}
+
+.registration-item small {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.8rem;
+}
+
+.registration-load-error {
+    margin: 0 0 18px;
+    color: #a02727;
+    font-weight: 600;
 }
 
 .empty-history-text {
