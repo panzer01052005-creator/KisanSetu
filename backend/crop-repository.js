@@ -47,6 +47,9 @@ const createCropRepository = (database = {}) => ({
         return registrations
             .filter((registration) => registration.userId === userId)
             .sort((first, second) => new Date(second.createdAt) - new Date(first.createdAt))
+            .map(({ id, crop, quantity, unit, center, address, district, pincode, status, createdAt }) => ({
+                id, crop, quantity, unit, center, address, district, pincode, status, createdAt,
+            }))
     },
 })
 
