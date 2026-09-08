@@ -1,8 +1,5 @@
 {
   "version": 2,
-  "build": {
-    "env": {}
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
