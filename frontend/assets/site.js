@@ -8,6 +8,11 @@ const apiBaseUrl = (() => {
     return ''
 })()
 
+// Scripts loaded after this one (such as the voice assistant) cannot access this
+// module-level constant. Keep the resolved API origin available to them so the
+// assistant also works when the frontend is served by Live Server.
+window.kisanSetuApiBaseUrl = apiBaseUrl
+
 document.addEventListener('DOMContentLoaded', () => {
     const translations = {
         en: {
@@ -355,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!document.querySelector('script[src="/voice-assistant.js"]')) {
         const voiceScript = document.createElement('script')
-        voiceScript.src = '/voice-assistant.js'
+        voiceScript.src = `${apiBaseUrl}/voice-assistant.js`
         document.body.appendChild(voiceScript)
     }
 
