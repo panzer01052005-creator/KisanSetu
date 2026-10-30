@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KisanSetu | Center Locator</title>
+    <style>
+      :root {
+        --bg: #f5f8ef;
+        --panel: #ffffff;
+        --panel-alt: #f9fbf4;
+        --primary: #1d6f3e;
+        --primary-dark: #114f2c;
+        --green: #2e9c71;
+        --green-soft: #dcf7ea;
+        --amber: #d98d18;
+        --amber-soft: #fff2d7;
+        --red: #d94d4d;
+        --red-soft: #fde7e7;
+        --muted: #64748b;
+        --text: #1e293b;
+        --border: rgba(15,46,30,0.08);
+        --shadow: 0 18px 40px rgba(24,40,29,0.08);
+        --radius: 18px;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: linear-gradient(180deg, #f3f9f0 0%, #f9fbf3 100%);
+        color: var(--text);
+        font-family: Inter, "Segoe UI", sans-serif;
+      }
+      a { color: inherit; text-decoration: none; }
+      button, input, select { font: inherit; }
+      .wrap { max-width: 1280px; margin: 0 auto; padding: 0 18px; }
+      .topbar {
+        background: var(--primary-dark);
+        color: #fff;
+        font-size: 0.8rem;
+      }
+      .topbar-inner, .head-inner, .nav-row, .toolbar, .stats-row, .map-layout, .toggle-row, .day-row, .action-row {
+        display: flex;
+        gap: 12px;
+      }
+      .topbar-inner, .head-inner {
+        width: min(1280px, calc(100% - 36px));
+        margin: 0 auto;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 46px;
+      }
+      .chip-row, .accessibility-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .chip, .mini-btn {
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+        border-radius: 999px;
+        padding: 6px 10px;
+      }
+      .header {
+        background: rgba(255,255,255,0.92);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(8px);
+      }
+      .head-inner { min-height: 78px; }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+      }
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary), #4ca76c);
+        box-shadow: var(--shadow);
+      }
+      .brand small {
+        display: block;
+        color: var(--muted);
+        font-size: 0.7rem;
+        letter-spacing: 0.06rem;
+        text-transform: uppercase;
+      }
+      .nav-link {
+        padding: 9px 14px;
+        border-radius: 999px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .nav-link.active, .nav-link:hover {
+        background: rgba(29,111,62,0.08);
+        color: var(--primary-dark);
+      }
+      .page {
+        padding: 26px 0 36px;
+      }
+      .hero {
+        background: linear-gradient(135deg, rgba(29,111,62,0.12), rgba(255,255,255,.96));
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        padding: 20px;
+      }
+      .hero h1 { margin: 0 0 12px; font-size: clamp(2rem, 4vw, 3rem); }
+      .muted { color: var(--muted); }
+      .toolbar {
+        background: rgba(255,255,255,0.7);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 14px;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-top: 16px;
+      }
+      .filter-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .input, .select {
+        border: 1px solid rgba(15,46,30,0.12);
+        border-radius: 10px;
+        background: #fff;
+        padding: 10px 12px;
+        min-width: 140px;
+      }
+      .primary-btn, .ghost-btn {
+        border: none;
+        padding: 11px 16px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .primary-btn {
+        background: linear-gradient(135deg, var(--primary), #4ca76c);
+        color: white;
+      }
+      .ghost-btn {
+        background: white;
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+      .stats-row {
+        margin-top: 18px;
+        flex-wrap: wrap;
+      }
+      .stat-card {
+        flex: 1 1 180px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 16px;
+      }
+      .stat-card span { display: block; color: var(--muted); font-size: .75rem; }
+      .stat-card strong { display: block; margin-top: 8px; font-size: 1.7rem; }
+      .map-layout {
+        margin-top: 24px;
+        align-items: stretch;
+      }
+      .map-panel, .list-panel, .matrix-panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .map-panel { flex: 1.25; padding: 16px; }
+      .list-panel { flex: 0.75; padding: 16px; }
+      .matrix-panel { margin-top: 20px; padding: 16px; }
+      .toggle-row {
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+      .segmented {
+        display: inline-flex;
+        background: #f4f8f2;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 4px;
+        gap: 4px;
+      }
+      .segmented button {
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .segmented button.active {
+        background: white;
+        color: var(--primary-dark);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      }
+      .map-box {
+        position: relative;
+        height: 420px;
+        border-radius: 18px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #eef8ee, #f7faf4);
+        border: 1px solid var(--border);
+      }
+      .map-box svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .map-marker {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        background: rgba(29,111,62,0.9);
+        color: white;
+        border-radius: 999px;
+        padding: 8px 10px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        box-shadow: 0 12px 18px rgba(20,76,44,0.2);
+      }
+      .map-marker.red { background: rgba(217,77,77,0.95); }
+      .map-marker.amber { background: rgba(217,141,24,0.95); }
+      .center-card {
+        background: #f8faf7;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+        margin-bottom: 10px;
+      }
+      .center-card strong { display: block; }
+      .status-pill {
+        display: inline-flex;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .status-pill.green { background: var(--green-soft); color: var(--primary); }
+      .status-pill.amber { background: var(--amber-soft); color: var(--amber); }
+      .status-pill.red { background: var(--red-soft); color: var(--red); }
+      .slot-matrix {
+        width: 100%;
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 820px;
+      }
+      th, td {
+        padding: 12px 10px;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+      }
+      th {
+        background: #f7faf4;
+        color: var(--muted);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05rem;
+      }
+      .cell {
+        border-radius: 10px;
+        padding: 8px 10px;
+        display: inline-block;
+        font-weight: 700;
+        font-size: 0.76rem;
+      }
+      .cell.green { background: var(--green-soft); color: var(--primary); }
+      .cell.amber { background: var(--amber-soft); color: var(--amber); }
+      .cell.red { background: var(--red-soft); color: var(--red); }
+      @media (max-width: 900px) {
+        .map-layout { display: block; }
+        .topbar-inner, .head-inner, .toolbar, .toggle-row { flex-direction: column; align-items: flex-start; }
+        .nav-row { justify-content: flex-start; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="topbar-inner">
+        <div class="chip-row">
+          <span class="chip">हिंदी</span>
+          <span class="chip">English</span>
+          <span class="chip">ਪੰਜਾਬੀ</span>
+        </div>
+        <div class="accessibility-group">
+          <button class="mini-btn" type="button">A-</button>
+          <button class="mini-btn" type="button">A</button>
+          <button class="mini-btn" type="button">A+</button>
+          <button class="mini-btn" type="button">Toll-Free IVR</button>
+        </div>
+      </div>
+    </div>
+
+    <header class="header">
+      <div class="head-inner">
+        <div class="brand">
+          <div class="brand-mark">🌾</div>
+          <div>
+            <h1>KisanSetu</h1>
+            <small>Smart Mandi Network</small>
+          </div>
+        </div>
+        <nav class="nav-row" aria-label="Main navigation">
+          <a class="nav-link" href="/index.html">Home</a>
+          <a class="nav-link active" href="/pages/center-locator.html">Centers</a>
+          <a class="nav-link" href="/pages/booking.html">Booking</a>
+          <a class="nav-link" href="/pages/support.html">Support</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap page">
+      <section class="hero">
+        <h1>Center locator & live capacity map</h1>
+        <p class="muted">Find the nearest procurement center, compare real-time capacity, and review the next 7-day slot availability without login.</p>
+
+        <div class="toolbar">
+          <div class="filter-group">
+            <select class="select" aria-label="Crop type">
+              <option>All crops</option>
+              <option>Wheat</option>
+              <option>Paddy</option>
+              <option>Mustard</option>
+            </select>
+            <select class="select" aria-label="District">
+              <option>All districts</option>
+              <option>Gurugram</option>
+              <option>Faridabad</option>
+              <option>Rewari</option>
+            </select>
+            <select class="select" aria-label="Capacity filter">
+              <option>Capacity: any</option>
+              <option>Below 70%</option>
+              <option>70% - 95%</option>
+              <option>Full / high load</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <button class="primary-btn" type="button">Apply filters</button>
+            <button class="ghost-btn" type="button">Reset</button>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <span>Centers online</span>
+            <strong>42</strong>
+          </div>
+          <div class="stat-card">
+            <span>Avg. queue</span>
+            <strong>26 min</strong>
+          </div>
+          <div class="stat-card">
+            <span>Available slots</span>
+            <strong>1,280</strong>
+          </div>
+          <div class="stat-card">
+            <span>Critical centers</span>
+            <strong>3</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="map-layout">
+        <div class="map-panel">
+          <div class="toggle-row">
+            <h3 style="margin:0;">Interactive capacity map</h3>
+            <div class="segmented">
+              <button class="active" type="button">Map view</button>
+              <button type="button">List view</button>
+            </div>
+          </div>
+
+          <div class="map-box">
+            <svg viewBox="0 0 800 420" aria-label="Map of procurement centers">
+              <path d="M120 90 L240 70 L330 150 L290 245 L180 280 L90 200 Z" fill="rgba(29,111,62,0.08)" stroke="rgba(29,111,62,0.18)" stroke-width="2"/>
+              <path d="M330 130 L510 100 L650 200 L620 310 L470 350 L330 260 Z" fill="rgba(29,111,62,0.06)" stroke="rgba(29,111,62,0.16)" stroke-width="2"/>
+              <path d="M470 200 L680 170 L750 270 L610 340 L500 300 Z" fill="rgba(217,141,24,0.08)" stroke="rgba(217,141,24,0.18)" stroke-width="2"/>
+            </svg>
+
+            <div class="map-marker" style="left: 27%; top: 48%;">PACS<br/>Manesar</div>
+            <div class="map-marker amber" style="left: 52%; top: 42%;">Shikohpur</div>
+            <div class="map-marker red" style="left: 74%; top: 58%;">Gurugram<br/>PACS</div>
+            <div class="map-marker" style="left: 42%; top: 70%;">Bawani</div>
+          </div>
+        </div>
+
+        <aside class="list-panel">
+          <div class="toggle-row">
+            <h3 style="margin:0;">Centers</h3>
+            <span class="status-pill green">Live</span>
+          </div>
+
+          <div class="center-card">
+            <strong>PACS Manesar</strong>
+            <div class="muted small">Wheat • 52% filled</div>
+            <div class="status-pill green" style="margin-top:10px;">Low queue</div>
+          </div>
+
+          <div class="center-card">
+            <strong>Shikohpur Mandi</strong>
+            <div class="muted small">Paddy • 78% filled</div>
+            <div class="status-pill amber" style="margin-top:10px;">Moderate queue</div>
+          </div>
+
+          <div class="center-card">
+            <strong>Gurugram PACS</strong>
+            <div class="muted small">Mustard • 100% filled</div>
+            <div class="status-pill red" style="margin-top:10px;">Full</div>
+          </div>
+
+          <div class="center-card">
+            <strong>Bawani Khera PACS</strong>
+            <div class="muted small">Barley • 32% filled</div>
+            <div class="status-pill green" style="margin-top:10px;">Open</div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="matrix-panel">
+        <div class="toggle-row">
+          <h3 style="margin:0;">7-day slot availability matrix</h3>
+          <div class="segmented">
+            <button class="active" type="button">All centers</button>
+            <button type="button">Nearest</button>
+          </div>
+        </div>
+
+        <div class="slot-matrix">
+          <table>
+            <thead>
+              <tr>
+                <th>Center</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+                <th>Sun</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>PACS Manesar</strong></td>
+                <td><span class="cell green">High</span></td>
+                <td><span class="cell green">High</span></td>
+                <td><span class="cell amber">Medium</span></td>
+                <td><span class="cell green">High</span></td>
+                <td><span class="cell green">High</span></td>
+                <td><span class="cell amber">Medium</span></td>
+                <td><span class="cell green">High</span></td>
+              </tr>
+              <tr>
+                <td><strong>Shikohpur Mandi</strong></td>
+                <td><span class="cell amber">Medium</span></td>
+                <td><span class="cell amber">Medium</span></td>
+                <td><span class="cell green">High</span></td>
+                <td><span class="cell amber">Medium</span></td>
+                <td><span class="cell red">Full</span></td>
+                <td><span class="cell amber">Medium</span></td>
+                <td><span class="cell green">High</span></td>
+              </tr>
+              <tr>
+                <td><strong>Gurugram PACS</strong></td>
+                <td><span class="cell red">Full</span></td>
+                <td><span class="cell red">Full</span></td>
+                <td><span class="cell red">Full</span></td>
+                <td><span class="cell amber">Medium</span></td>
+                <td><span class="cell amber">Medium</span></td>
+                <td><span class="cell amber">Medium</span></td>
+                <td><span class="cell red">Full</span></td>
+              </tr>
+              <tr>
+                <td><strong>Bawani Khera PACS</strong></td>
+                <td><span class="cell green">High</span></td>
+                <td><span class="cell green">High</span></td>
+                <td><span class="cell green">High</span></td>
+                <td><span class="cell green">High</span></td>
+                <td><span class="cell amber">Medium</span></td>
+                <td><span class="cell green">High</span></td>
+                <td><span class="cell green">High</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
