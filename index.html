@@ -911,6 +911,12 @@
           <span class="chip">English</span>
           <span class="chip">मराठी</span>
         </div>
+        <div class="accessibility-group" style="gap: 10px;">
+          <a class="chip" href="index.html">Home</a>
+          <a class="chip" href="farmer-dashboard.html">Dashboard</a>
+          <a class="chip" href="booking.html">Booking</a>
+          <a class="chip" href="support.html">Support</a>
+        </div>
         <div class="accessibility-group">
           <div class="lang-switch">
             <button class="mini-btn" data-font-size="small">A-</button>
@@ -941,11 +947,6 @@
           <button class="nav-btn" data-target="farmer-auth">Farmer</button>
           <button class="nav-btn" data-target="admin-schedule">Admin</button>
         </nav>
-      </div>
-      <div class="module-bar">
-        <button class="portal-tab active" data-target="public-home">Public</button>
-        <button class="portal-tab" data-target="farmer-auth">Farmer Portal</button>
-        <button class="portal-tab" data-target="admin-schedule">Procurement Admin</button>
       </div>
     </header>
 
@@ -1167,58 +1168,76 @@
               <div class="section-head">
                 <h3 style="margin: 0;">Help, IVR & grievance desk</h3>
               </div>
-              <div class="form-grid">
-                <div>
-                  <label class="label">Farmer / Trader name</label>
-                  <input class="input" value="Rahul Singh" />
+              <form id="grievanceForm" novalidate>
+                <div class="form-grid">
+                  <div>
+                    <label class="label" for="grievanceMobile">Farmer Mobile Number</label>
+                    <input class="input" id="grievanceMobile" type="tel" maxlength="10" inputmode="numeric" placeholder="Enter 10-digit mobile number" required />
+                  </div>
+                  <div>
+                    <label class="label" for="grievanceTokenId">Token ID (Optional)</label>
+                    <input class="input" id="grievanceTokenId" placeholder="e.g. KSM-40188" />
+                  </div>
+                  <div>
+                    <label class="label" for="grievanceCenter">Procurement Center</label>
+                    <select class="select" id="grievanceCenter" required>
+                      <option value="">Select center</option>
+                      <option>PACS Manesar</option>
+                      <option>Shikohpur Mandi</option>
+                      <option>Gurugram PACS</option>
+                      <option>Rampur PACS</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="label" for="grievanceCategory">Issue Category</label>
+                    <select class="select" id="grievanceCategory" required>
+                      <option value="">Select issue category</option>
+                      <option>Weighing Discrepancy</option>
+                      <option>Unfair Quality Rejection</option>
+                      <option>Delayed Payment</option>
+                      <option>Officer Misconduct</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="label" for="grievanceImage">Image Upload</label>
+                    <input class="input" id="grievanceImage" type="file" accept="image/png,image/jpeg,image/jpg,image/webp" />
+                    <img id="imagePreview" src="" alt="Selected preview" style="display:none; max-width:160px; border-radius: 12px; margin-top: 10px; border:1px solid rgba(15,46,30,0.08);" />
+                  </div>
+                  <div>
+                    <label class="label" for="grievanceVoice">Voice Note Upload</label>
+                    <input class="input" id="grievanceVoice" type="file" accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/m4a" />
+                    <div id="voiceNoteName" class="muted small" style="margin-top:8px;">No voice note selected.</div>
+                  </div>
+                  <div>
+                    <label class="label" for="grievanceDescription">Description</label>
+                    <textarea class="textarea" id="grievanceDescription" rows="5" placeholder="Describe the issue, lot details, and timeline" required></textarea>
+                  </div>
+                  <button class="primary-btn" id="submitTicketBtn" type="submit">Submit grievance</button>
+                  <div id="ticketFeedback" class="small" role="status" aria-live="polite" style="min-height:20px;"></div>
                 </div>
-                <div>
-                  <label class="label">Issue category</label>
-                  <select class="select">
-                    <option>Payment delay</option>
-                    <option>Quality dispute</option>
-                    <option>Queue complaint</option>
-                    <option>Document mismatch</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="label">Description</label>
-                  <textarea class="textarea" rows="5">My lot was weighed at PACS 12 but the digital receipt did not reflect the final weight. Need urgent review before evening payment run.</textarea>
-                </div>
-                <div>
-                  <label class="label">Upload photo / voice note</label>
-                  <div class="upload-box">📎 Add photo, video or voice note</div>
-                </div>
-                <button class="primary-btn" id="submitTicketBtn">Submit grievance</button>
-              </div>
+              </form>
             </div>
             <div class="panel">
               <div class="section-head">
                 <h4 style="margin: 0;">Ticket SLA tracker</h4>
               </div>
-              <div class="ticket-card">
-                <strong>Ticket #MSD-1072</strong>
-                <div class="muted small">Status: In progress</div>
-                <div class="pill-group">
-                  <span class="status-pill amber">SLA 4h</span>
-                  <span class="status-pill green">ACK verified</span>
+              <form id="ticketStatusForm" novalidate>
+                <div class="form-grid">
+                  <div>
+                    <label class="label" for="ticketIdInput">Ticket ID</label>
+                    <input class="input" id="ticketIdInput" placeholder="MSD-123456" />
+                  </div>
+                  <div>
+                    <label class="label" for="ticketMobileInput">Registered mobile number</label>
+                    <input class="input" id="ticketMobileInput" type="tel" maxlength="10" placeholder="Enter mobile used during submission" />
+                  </div>
+                  <button class="ghost-btn" type="submit">Check ticket status</button>
                 </div>
-              </div>
-              <div class="ticket-card">
-                <strong>Ticket #MSD-1088</strong>
-                <div class="muted small">Status: Escalated</div>
-                <div class="pill-group">
-                  <span class="status-pill red">High priority</span>
-                  <span class="status-pill grey">Awaiting proof</span>
-                </div>
-              </div>
-              <div class="ticket-card">
-                <strong>Ticket #MSD-1104</strong>
-                <div class="muted small">Status: Resolved</div>
-                <div class="pill-group">
-                  <span class="status-pill green">Closed</span>
-                  <span class="status-pill green">UTR linked</span>
-                </div>
+              </form>
+              <div id="ticketStatusResult" class="ticket-card" style="margin-top: 12px; background: rgba(29,111,62,0.02);">
+                <strong>Ticket status appears here</strong>
+                <div class="muted small">Enter a valid ticket ID and mobile number to view the current resolution status.</div>
               </div>
             </div>
           </div>
@@ -1907,9 +1926,180 @@
         showSection('farmer-dashboard');
       });
 
+      function setFeedback(el, message, isError) {
+        const node = document.getElementById(el);
+        if (!node) return;
+        node.textContent = message;
+        node.style.color = isError ? '#b42318' : '#14532d';
+        node.style.fontWeight = '600';
+      }
+
+      function validateTicketSubmission() {
+        const mobile = document.getElementById('grievanceMobile').value.trim();
+        const center = document.getElementById('grievanceCenter').value.trim();
+        const category = document.getElementById('grievanceCategory').value.trim();
+        const description = document.getElementById('grievanceDescription').value.trim();
+        const imageFile = document.getElementById('grievanceImage').files[0];
+        const voiceFile = document.getElementById('grievanceVoice').files[0];
+
+        if (!/^\d{10}$/.test(mobile)) {
+          setFeedback('ticketFeedback', 'Please enter a valid 10-digit mobile number.', true);
+          return null;
+        }
+
+        if (!center) {
+          setFeedback('ticketFeedback', 'Please select the procurement center.', true);
+          return null;
+        }
+
+        if (!category) {
+          setFeedback('ticketFeedback', 'Please select an issue category.', true);
+          return null;
+        }
+
+        if (!description) {
+          setFeedback('ticketFeedback', 'Please enter a description of the issue.', true);
+          return null;
+        }
+
+        if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+          setFeedback('ticketFeedback', 'Image upload must be smaller than 5 MB.', true);
+          return null;
+        }
+
+        if (voiceFile && voiceFile.size > 10 * 1024 * 1024) {
+          setFeedback('ticketFeedback', 'Voice note must be smaller than 10 MB.', true);
+          return null;
+        }
+
+        return {
+          farmerMobile: mobile,
+          tokenId: document.getElementById('grievanceTokenId').value.trim(),
+          centerName: center,
+          issueCategory: category,
+          description,
+          imageName: imageFile ? imageFile.name : null,
+          voiceNoteName: voiceFile ? voiceFile.name : null
+        };
+      }
+
+      document.getElementById('grievanceImage').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        const preview = document.getElementById('imagePreview');
+        if (!file) {
+          preview.style.display = 'none';
+          preview.src = '';
+          return;
+        }
+
+        if (!['image/png', 'image/jpeg', 'image/jpg', 'image/webp'].includes(file.type)) {
+          setFeedback('ticketFeedback', 'Only JPG, PNG, and WEBP image files are allowed.', true);
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById('grievanceVoice').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        const label = document.getElementById('voiceNoteName');
+        if (!file) {
+          label.textContent = 'No voice note selected.';
+          return;
+        }
+        const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/m4a'];
+        if (!allowedTypes.includes(file.type)) {
+          setFeedback('ticketFeedback', 'Only MP3, WAV, OGG, or M4A voice files are allowed.', true);
+          label.textContent = 'Unsupported file type.';
+          return;
+        }
+        label.textContent = file.name;
+      });
+
+      document.getElementById('grievanceForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const payload = validateTicketSubmission();
+        if (!payload) return;
+
+        const submitBtn = document.getElementById('submitTicketBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+        setFeedback('ticketFeedback', 'Submitting grievance to the district nodal officer...', false);
+
+        try {
+          const response = await fetch('/api/v1/support/tickets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await response.json();
+          if (!response.ok) {
+            throw new Error(result.message || 'Ticket submission failed.');
+          }
+
+          const ticket = result.data;
+          const ticketId = ticket.ticketId || ticket.id || 'MSD-UNKNOWN';
+          setFeedback('ticketFeedback', `Ticket submitted successfully. Reference: ${ticketId}. SLA: ${ticket.slaHours || 4} hours.`, false);
+          document.getElementById('grievanceForm').reset();
+          document.getElementById('imagePreview').style.display = 'none';
+          document.getElementById('voiceNoteName').textContent = 'No voice note selected.';
+          document.getElementById('ticketIdInput').value = ticketId;
+          document.getElementById('ticketMobileInput').value = payload.farmerMobile;
+        } catch (error) {
+          setFeedback('ticketFeedback', error.message || 'Unable to submit grievance right now.', true);
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit grievance';
+        }
+      });
+
+      document.getElementById('ticketStatusForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const ticketId = document.getElementById('ticketIdInput').value.trim();
+        const mobile = document.getElementById('ticketMobileInput').value.trim();
+        const resultNode = document.getElementById('ticketStatusResult');
+
+        if (!ticketId || !/^MSD-\d{6,}$/.test(ticketId)) {
+          resultNode.innerHTML = '<strong>Invalid ticket ID</strong><div class="muted small">Please enter a valid ticket reference like MSD-123456.</div>';
+          return;
+        }
+
+        if (!/^\d{10}$/.test(mobile)) {
+          resultNode.innerHTML = '<strong>Mobile number required</strong><div class="muted small">Please enter the registered mobile number used when the grievance was filed.</div>';
+          return;
+        }
+
+        try {
+          const response = await fetch(`/api/v1/support/tickets/${encodeURIComponent(ticketId)}?mobile=${encodeURIComponent(mobile)}`);
+          const payload = await response.json();
+
+          if (!response.ok || !payload.success) {
+            throw new Error(payload.message || 'Unable to fetch ticket status.');
+          }
+
+          const ticket = payload.data;
+          resultNode.innerHTML = `
+            <strong>Ticket ${ticket.ticketId}</strong>
+            <div class="muted small">Submitted: ${new Date(ticket.createdAt).toLocaleString()}</div>
+            <div class="list-row"><span>Issue</span><strong>${ticket.issueCategory}</strong></div>
+            <div class="list-row"><span>Status</span><strong>${ticket.status}</strong></div>
+            <div class="list-row"><span>Assigned department</span><strong>${ticket.assignedDepartment}</strong></div>
+            <div class="list-row"><span>Expected resolution</span><strong>${new Date(ticket.slaDeadline).toLocaleString()}</strong></div>
+            <div class="list-row"><span>Status history</span><strong>${ticket.statusHistory.map(item => item.status).join(', ')}</strong></div>
+          `;
+        } catch (error) {
+          resultNode.innerHTML = `<strong>Status unavailable</strong><div class="muted small">${error.message}</div>`;
+        }
+      });
+
       document.getElementById('checkGuidelineBtn').addEventListener('click', updateQualityResult);
       document.getElementById('calculateWeighbridgeBtn').addEventListener('click', calculateWeight);
-      document.getElementById('submitTicketBtn').addEventListener('click', () => alert('Grievance ticket submitted successfully. Reference: MSD-1121. SLA: 4 hours.'));
       document.getElementById('lookupTokenBtn').addEventListener('click', renderTokenTimeline);
       document.getElementById('scanQrBtn').addEventListener('click', () => alert('QR scan complete. Slot verified, gate check-in recorded, vehicle registered.'));
       document.getElementById('manualCheckinBtn').addEventListener('click', () => alert('Gate status updated to GATE_CHECKED_IN. Queue number assigned.'));

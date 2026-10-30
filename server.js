@@ -57,6 +57,20 @@ const faqNorms = {
   }
 };
 
+const supportTickets = [];
+
+const issueSlaMap = {
+  'Weighing Discrepancy': 4,
+  'Unfair Quality Rejection': 4,
+  'Delayed Payment': 6,
+  'Officer Misconduct': 2,
+  'Other': 8
+};
+
+function buildTicketId() {
+  return 'MSD-' + String(Date.now()).slice(-6);
+}
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', service: 'kisan-setu', timestamp: new Date().toISOString() });
 });
@@ -76,14 +90,74 @@ app.get('/api/v1/public/faq-norms/:cropId', (req, res) => {
 });
 
 app.post('/api/v1/support/tickets', (req, res) => {
+  const { farmerMobile, tokenId, centerName, issueCategory, description, imageName, voiceNoteName } = req.body || {};
+
+  if (!farmerMobile || !/^\d{10}$/.test(String(farmerMobile))) {
+    return res.status(400).json({ success: false, message: 'A valid 10-digit mobile number is required.' });
+  }
+
+  if (!centerName || !issueCategory || !description || !String(description).trim()) {
+    return res.status(400).json({ success: false, message: 'Center, issue category, and description are required.' });
+  }
+
+  const ticketId = buildTicketId();
+  const issueKey = issueCategory || 'Other';
+  const slaHours = issueSlaMap[issueKey] || 8;
+  const createdAt = new Date().toISOString();
+
   const ticket = {
-    id: 'MSD-' + Math.floor(1000 + Math.random() * 9000),
-    ...req.body,
-    status: 'OPEN',
-    slaHours: 4,
-    createdAt: new Date().toISOString()
+    ticketId,
+    farmerMobile: String(farmerMobile),
+    tokenId: tokenId || null,
+    centerName,
+    issueCategory: issueKey,
+    description: String(description).trim(),
+    attachments: {
+      image: imageName || null,
+      voiceNote: voiceNoteName || null
+    },
+    status: 'Submitted',
+    assignedDepartment: 'District Nodal Officer',
+    slaHours,
+    slaDeadline: new Date(Date.now() + slaHours * 60 * 60 * 1000).toISOString(),
+    createdAt,
+    statusHistory: [
+      {
+        status: 'Submitted',
+        timestamp: createdAt,
+        note: 'Ticket submitted and routed to district nodal officer.'
+      }
+    ],
+    notification: {
+      mode: 'demo',
+      status: 'Mock SMS + dashboard alert queued',
+      recipient: 'district_nodal_officer'
+    }
   };
-  res.status(201).json({ success: true, data: ticket });
+
+  supportTickets.push(ticket);
+
+  return res.status(201).json({
+    success: true,
+    message: 'Grievance submitted successfully and routed to the district nodal officer.',
+    data: ticket
+  });
+});
+
+app.get('/api/v1/support/tickets/:ticketId', (req, res) => {
+  const { ticketId } = req.params;
+  const { mobile } = req.query;
+  const ticket = supportTickets.find((item) => item.ticketId === ticketId);
+
+  if (!ticket) {
+    return res.status(404).json({ success: false, message: 'Ticket not found.' });
+  }
+
+  if (!mobile || ticket.farmerMobile !== String(mobile).replace(/\D/g, '')) {
+    return res.status(403).json({ success: false, message: 'Ticket lookup requires a valid mobile number match for privacy protection.' });
+  }
+
+  return res.json({ success: true, data: ticket });
 });
 
 app.post('/api/v1/auth/send-otp', (req, res) => {
