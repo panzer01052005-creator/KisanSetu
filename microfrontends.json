@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/microfrontends.json",
+  "applications": {
+    "YOUR_VERCEL_PROJECT_NAME": {
+      "development": {
+        "fallback": "localhost:3000"
+      }
+    }
+  }
+}
