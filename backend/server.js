@@ -7,10 +7,13 @@ const path = require('path');
 
 const app = express();
 const frontendDir = path.join(__dirname, '../frontend');
+const frontendIndexPath = path.join(frontendDir, 'index.html');
 
+app.set('trust proxy', 1);
+app.disable('x-powered-by');
 app.use(cors());
 app.use(express.json());
-app.use(express.static(frontendDir));
+app.use(express.static(frontendDir, { index: false }));
 
 mongoose.set('bufferCommands', false);
 
@@ -155,6 +158,16 @@ app.get('/api/status', async (req, res) => {
     dbConnected: connected,
     mode: connected ? 'MongoDB Atlas Connected' : 'In-Memory Active Mode',
     errorHint: lastDbError
+  });
+});
+
+app.get('/healthz', async (req, res) => {
+  const connected = await connectDB();
+  res.status(200).json({
+    ok: true,
+    name: 'KisanSetu',
+    dbConnected: connected,
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -705,7 +718,7 @@ const KISANSETU_HTML = `<!DOCTYPE html>
 </html>`;
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(frontendDir, 'index.html'));
+  res.sendFile(frontendIndexPath);
 });
 
 app.get('*', (req, res) => {
@@ -714,7 +727,7 @@ app.get('*', (req, res) => {
   }
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.sendFile(path.join(frontendDir, 'index.html'));
+  res.sendFile(frontendIndexPath);
 });
 
 if (require.main === module) {
