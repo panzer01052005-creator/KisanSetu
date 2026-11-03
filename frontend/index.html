@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>e-Kisan Mandi | Smart Agricultural Procurement Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .portal-tab-active { background-color: #15803d; color: #ffffff; font-weight: 700; }
+    .sub-tab-active { border-bottom: 3px solid #15803d; color: #15803d; font-weight: 700; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+
+  <!-- Top Accessibility & Status Bar -->
+  <div class="bg-slate-900 text-slate-200 text-xs py-2 px-4 flex flex-wrap justify-between items-center gap-2">
+    <div class="flex items-center gap-3">
+      <span id="dbStatusBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-900 text-emerald-300 font-medium border border-emerald-700">
+        Checking Database...
+      </span>
+      <span>Toll-Free Kisan IVR: <strong>1800-180-1551</strong></span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-amber-300 font-medium">Live Alert: Carry dried harvest within FAQ moisture norms for instant Kata weighing.</span>
+    </div>
+  </div>
+
+  <!-- Main Header & 3-Portal Switcher -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-green-700 text-white flex items-center justify-center font-bold text-xl">M</div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight">e-Kisan Smart Mandi Portal</h1>
+          <p class="text-xs text-slate-500">Slot Booking • Live Queue • Digital J-Form & DBT Tracker</p>
+        </div>
+      </div>
+
+      <!-- Role / Portal Switcher -->
+      <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-sm">
+        <button onclick="switchPortal('public')" id="btn-portal-public" class="px-4 py-2 rounded-lg transition portal-tab-active">
+          1. Public Discovery
+        </button>
+        <button onclick="switchPortal('farmer')" id="btn-portal-farmer" class="px-4 py-2 rounded-lg transition text-slate-700">
+          2. Farmer Portal
+        </button>
+        <button onclick="switchPortal('admin')" id="btn-portal-admin" class="px-4 py-2 rounded-lg transition text-slate-700">
+          3. Mandi Officer Admin
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto w-full px-4 py-6 flex-1">
+
+    <!-- ================================================================== -->
+    <!-- PORTAL 1: PUBLIC & DISCOVERY PORTAL                                -->
+    <!-- ================================================================== -->
+    <section id="portal-public" class="space-y-6">
+      <div class="bg-gradient-to-r from-green-800 to-emerald-700 rounded-2xl p-6 text-white flex flex-wrap justify-between items-center gap-4 shadow">
+        <div class="max-w-2xl">
+          <span class="text-xs uppercase tracking-wider bg-green-900/60 px-3 py-1 rounded-full">Zero Waiting Time Initiative</span>
+          <h2 class="text-2xl font-bold mt-2">Check Live Mandi Capacity, MSP Schedules & Book 2-Hour Arrival Slots</h2>
+          <p class="text-green-100 text-sm mt-1">Eliminate 12-hour tractor queues. Verify crop moisture rules before transport and track your lot from Gate Entry to Bank DBT Settlement.</p>
+        </div>
+        <div class="flex gap-3">
+          <button onclick="switchPortal('farmer'); switchFarmerTab('book');" class="bg-white text-green-800 font-bold px-5 py-2.5 rounded-xl shadow hover:bg-green-50 text-sm">
+            Book Procurement Slot →
+          </button>
+          <button onclick="switchPortal('farmer'); switchFarmerTab('track');" class="bg-green-900/60 border border-green-400 text-white font-semibold px-4 py-2.5 rounded-xl hover:bg-green-900 text-sm">
+            Track e-Token Status
+          </button>
+        </div>
+      </div>
+
+      <!-- Public Navigation Sub-Tabs -->
+      <div class="flex border-b border-slate-200 gap-6 text-sm overflow-x-auto">
+        <button onclick="switchPublicTab('schedules')" id="pub-tab-schedules" class="pb-3 sub-tab-active">1.1 Live MSP & Crop Schedule</button>
+        <button onclick="switchPublicTab('centers')" id="pub-tab-centers" class="pb-3 text-slate-600">1.2 Center Locator & 7-Day Capacity</button>
+        <button onclick="switchPublicTab('guidelines')" id="pub-tab-guidelines" class="pb-3 text-slate-600">1.3 Moisture & FAQ Self-Check</button>
+        <button onclick="switchPublicTab('support')" id="pub-tab-support" class="pb-3 text-slate-600">1.4 Help & Grievance Desk</button>
+      </div>
+
+      <!-- 1.1 Crop-Wise Procurement Schedule -->
+      <div id="pub-view-schedules" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
+          <div>
+            <h3 class="font-bold text-base">Live Crop-Wise Procurement Calendar & MSP Rates</h3>
+            <p class="text-xs text-slate-500">Official Minimum Support Price (₹ per Quintal) and active procurement windows</p>
+          </div>
+          <select id="seasonFilter" onchange="loadSchedules()" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm">
+            <option value="All">All Seasons (Kharif & Rabi)</option>
+            <option value="Kharif">Kharif Season</option>
+            <option value="Rabi">Rabi Season</option>
+          </select>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                <th class="p-3">Crop Name & Variety</th>
+                <th class="p-3">Season</th>
+                <th class="p-3">MSP Rate (₹/Qtl)</th>
+                <th class="p-3">Max Moisture (%)</th>
+                <th class="p-3">Procurement Window</th>
+                <th class="p-3">Operating Hours</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleTableBody" class="divide-y divide-slate-200"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 1.2 Center Locator & Capacity Map -->
+      <div id="pub-view-centers" class="hidden space-y-4">
+        <div class="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap justify-between items-center gap-4">
+          <div>
+            <h3 class="font-bold text-base">Procurement Center Locator & Real-Time Slot Capacity</h3>
+            <p class="text-xs text-slate-500">Green: &lt;70% Booked (Available) • Amber: 70–95% Booked (Filling Fast) • Red: 100% Full</p>
+          </div>
+          <div class="flex gap-2">
+            <input id="pincodeFilter" type="text" placeholder="Filter by Pincode (e.g. 283121)" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm" />
+            <button onclick="loadCenters()" class="bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium">Search</button>
+          </div>
+        </div>
+        <div id="centersGrid" class="grid md:grid-cols-3 gap-4"></div>
+      </div>
+
+      <!-- 1.3 Quality & Moisture Guidelines + Self-Check Calculator -->
+      <div id="pub-view-guidelines" class="hidden grid md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+          <h3 class="font-bold text-base mb-2">Interactive FAQ Moisture & Quality Self-Check Calculator</h3>
+          <p class="text-xs text-slate-500 mb-4">Test your harvest metrics before hiring a tractor to avoid gate rejection or drying delays.</p>
+          <div class="space-y-3 text-sm">
+            <div>
+              <label class="block font-medium mb-1">Select Crop</label>
+              <select id="calcCrop" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                <option value="14">Wheat (Max Moisture: 14.0%, Max Foreign Matter: 0.75%)</option>
+                <option value="17">Paddy Common / Grade-A (Max Moisture: 17.0%, Max Foreign Matter: 1.0%)</option>
+                <option value="8">Mustard (Max Moisture: 8.0%, Max Foreign Matter: 2.0%)</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-medium mb-1">Your Grain Moisture (%)</label>
+                <input id="calcMoisture" type="number" step="0.1" value="13.5" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+              </div>
+              <div>
+                <label class="block font-medium mb-1">Foreign Matter (%)</label>
+                <input id="calcForeign" type="number" step="0.1" value="0.5" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+              </div>
+            </div>
+            <button onclick="runFaqCalculator()" class="w-full bg-green-700 text-white font-semibold py-2.5 rounded-lg hover:bg-green-800">
+              Check Lot Eligibility
+            </button>
+            <div id="calcResultBox" class="p-4 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 text-sm">
+              <strong>PASS (FAQ Approved):</strong> Your grain meets Fair Average Quality norms and is eligible for direct weighbridge (*Kata*) entry.
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 text-sm">
+          <h3 class="font-bold text-base">Pre-Arrival Checklist & Bardana Packaging Norms</h3>
+          <ul class="list-disc pl-5 space-y-2 text-slate-700">
+            <li><strong>Moisture Control:</strong> Sun-dry harvested grain if moisture exceeds 14% (Wheat) or 17% (Paddy) to avoid `ON_HOLD` status at the Mandi quality desk.</li>
+            <li><strong>Winnowing & Cleaning:</strong> Remove chaff, mud balls, and stones so foreign matter remains below 1%.</li>
+            <li><strong>Gunny Bag (*Bardana*) Rule:</strong> Standard 50 kg jute bags are provided at the center (2 bags per quintal). Standard bag tare weight (500g/bag) is deducted automatically at the electronic weighbridge.</li>
+            <li><strong>QR Gate Pass:</strong> Carry your downloaded QR e-Token or SMS code during your assigned 2-hour window.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 1.4 Help & Grievance Desk -->
+      <div id="pub-view-support" class="hidden grid md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+          <h3 class="font-bold text-base mb-1">Raise a Procurement Grievance (4-Hour District Nodal SLA)</h3>
+          <p class="text-xs text-slate-500 mb-4">Report weighing discrepancies, unfair moisture holds, or payment delays.</p>
+          <form onsubmit="submitGrievance(event)" class="space-y-3 text-sm">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-medium mb-1">Farmer Mobile</label>
+                <input id="grvMobile" required value="9876543210" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+              </div>
+              <div>
+                <label class="block font-medium mb-1">e-Token ID (Optional)</label>
+                <input id="grvTokenId" value="MND-2026-1042" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+              </div>
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Issue Category</label>
+              <select id="grvCategory" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                <option>Unfair Quality / Moisture Rejection</option>
+                <option>Weighbridge (Kata) Weight Discrepancy</option>
+                <option>Center Queue / Delay Issue</option>
+                <option>DBT Payment Settlement Delay</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Description</label>
+              <textarea id="grvDesc" rows="3" required placeholder="Describe the issue..." class="w-full border border-slate-300 rounded-lg px-3 py-2"></textarea>
+            </div>
+            <button type="submit" class="bg-green-700 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-green-800">
+              Submit Grievance Ticket
+            </button>
+          </form>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+          <h3 class="font-bold text-base mb-3">Active Grievance Tickets</h3>
+          <div id="grievanceList" class="space-y-3 text-sm"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- PORTAL 2: FARMER PORTAL (OTP AUTH, SLOT BOOKING & 6-STAGE TRACKER) -->
+    <!-- ================================================================== -->
+    <section id="portal-farmer" class="hidden space-y-6">
+      <!-- Farmer Profile Banner -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap justify-between items-center gap-4 shadow-sm">
+        <div>
+          <span class="text-xs font-bold uppercase text-green-700 bg-green-50 px-2.5 py-1 rounded">Verified Farmer Session</span>
+          <h2 class="text-lg font-bold mt-1">Ramesh Chandra Verma <span class="text-sm font-normal text-slate-500">(ID: UP-AGR-KISAN-88412)</span></h2>
+          <p class="text-xs text-slate-600">Khasra Verified: <strong>2.7 Hectares (Max Quota: 135 Quintals)</strong> • DBT Bank: <strong>SBI XXXX4821 (NPCI Active)</strong></p>
+        </div>
+        <div class="flex gap-2 text-sm">
+          <button onclick="switchFarmerTab('dashboard')" id="farm-tab-dashboard" class="px-3 py-2 rounded-lg sub-tab-active">2.1 Dashboard & Vault</button>
+          <button onclick="switchFarmerTab('book')" id="farm-tab-book" class="px-3 py-2 rounded-lg text-slate-600">2.2 Book Smart Slot</button>
+          <button onclick="switchFarmerTab('track')" id="farm-tab-track" class="px-3 py-2 rounded-lg text-slate-600">2.3 Live 6-Stage Tracker</button>
+        </div>
+      </div>
+
+      <!-- 2.1 Farmer Dashboard & Digital Vault -->
+      <div id="farm-view-dashboard" class="space-y-4">
+        <div class="flex justify-between items-center">
+          <h3 class="font-bold text-base">Your Active e-Tokens & Digital J-Form Vault</h3>
+          <button onclick="switchFarmerTab('book')" class="bg-green-700 text-white text-xs font-semibold px-4 py-2 rounded-lg">+ Book New Procurement Slot</button>
+        </div>
+        <div id="farmerTokensList" class="grid md:grid-cols-2 gap-4"></div>
+      </div>
+
+      <!-- 2.2 Smart Slot & e-Token Booking Wizard -->
+      <div id="farm-view-book" class="hidden bg-white rounded-xl border border-slate-200 p-6 shadow-sm max-w-3xl mx-auto">
+        <h3 class="font-bold text-lg mb-1">Smart Mandi Slot & QR e-Token Booking Wizard</h3>
+        <p class="text-xs text-slate-500 mb-5">Capacity is locked atomically in MongoDB when you confirm your 2-hour arrival window.</p>
+        <form onsubmit="bookProcurementSlot(event)" class="space-y-4 text-sm">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-medium mb-1">Farmer Name</label>
+              <input id="bookFarmerName" required value="Ramesh Chandra Verma" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Mobile Number (SMS Alerts)</label>
+              <input id="bookFarmerMobile" required value="9876543210" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-4">
+            <div>
+              <label class="block font-medium mb-1">Step 1: Select Crop</label>
+              <select id="bookCropName" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                <option value="Paddy (Dhan - Common)">Paddy (Dhan - Common) — ₹2,300/Qtl</option>
+                <option value="Paddy (Grade-A)">Paddy (Grade-A) — ₹2,320/Qtl</option>
+                <option value="Wheat (Gehu)">Wheat (Gehu) — ₹2,425/Qtl</option>
+                <option value="Mustard (Sarson)">Mustard (Sarson) — ₹5,950/Qtl</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Quantity to Sell (Quintals)</label>
+              <input id="bookQuintals" type="number" min="1" max="135" required value="40" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Land Parcel (Khasra No.)</label>
+              <select id="bookKhasra" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                <option value="KH-402/1B">KH-402/1B (Max 90 Qtl)</option>
+                <option value="KH-405/3A">KH-405/3A (Max 45 Qtl)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-4">
+            <div>
+              <label class="block font-medium mb-1">Step 2: Select Mandi Center</label>
+              <select id="bookCenterCode" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                <option value="MND-AGR-01">Kheragarh Mandi (4.2 km — Available)</option>
+                <option value="MND-AGR-02">Fatehabad PACS (14.8 km — Filling Fast)</option>
+                <option value="MND-RMP-03">Bilaspur Model Mandi (19.5 km — Overflow Open)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Arrival Date</label>
+              <input id="bookSlotDate" type="date" required value="2026-11-05" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Step 3: 2-Hr Time Slot</label>
+              <select id="bookSlotWindow" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                <option value="08:00 AM - 10:00 AM">08:00 AM - 10:00 AM</option>
+                <option value="10:00 AM - 12:00 PM">10:00 AM - 12:00 PM</option>
+                <option value="01:00 PM - 03:00 PM">01:00 PM - 03:00 PM</option>
+                <option value="03:00 PM - 05:00 PM">03:00 PM - 05:00 PM</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-green-700 text-white font-bold py-3 rounded-xl shadow hover:bg-green-800">
+            Confirm Capacity Lock & Generate HMAC QR e-Token
+          </button>
+        </form>
+      </div>
+
+      <!-- 2.3 Live 6-Stage Procurement Status Tracker -->
+      <div id="farm-view-track" class="hidden space-y-4">
+        <div class="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap justify-between items-center gap-4">
+          <div class="flex items-center gap-2">
+            <label class="text-sm font-semibold">Inspect e-Token ID:</label>
+            <input id="trackTokenInput" type="text" value="MND-2026-1042" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-mono" />
+            <button onclick="loadTokenTimeline()" class="bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium">Track Lot</button>
+          </div>
+          <span class="text-xs text-slate-500">Tip: Switch to "3. Mandi Officer Admin" to push this token through Gate, Quality, Weighing & Payment!</span>
+        </div>
+        <div id="trackerContainer" class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm"></div>
+      </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- PORTAL 3: PROCUREMENT OFFICER / MANDI ADMIN PORTAL                 -->
+    <!-- ================================================================== -->
+    <section id="portal-admin" class="hidden space-y-6">
+      <div class="bg-slate-900 text-white rounded-xl p-5 flex flex-wrap justify-between items-center gap-4">
+        <div>
+          <span class="text-xs uppercase tracking-wider bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded border border-amber-400/30">RBAC Officer Terminal</span>
+          <h2 class="text-xl font-bold mt-1">Mandi Operations & Settlement Console</h2>
+          <p class="text-xs text-slate-300">Execute Gate QR Check-In, Quality Grading, Two-Pass Kata Weighing, and Digital J-Form DBT Settlement.</p>
+        </div>
+        <div class="flex items-center gap-2 bg-slate-800 p-2 rounded-lg border border-slate-700">
+          <span class="text-xs text-slate-300">Active Token ID:</span>
+          <select id="adminTokenSelector" onchange="syncAdminSelectedToken()" class="bg-slate-950 text-amber-300 font-mono text-sm px-3 py-1.5 rounded border border-slate-700"></select>
+        </div>
+      </div>
+
+      <!-- 4 Operational Consoles Grid -->
+      <div class="grid md:grid-cols-2 gap-6">
+
+        <!-- 3.2 Gate Check-In Console -->
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 text-sm">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold text-base">Step 1: Gate QR Check-In & Queue Console</h3>
+            <span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-semibold">Gate Operator</span>
+          </div>
+          <p class="text-xs text-slate-500">Verifies HMAC QR token, logs tractor number, and assigns a virtual queue number.</p>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-medium mb-1">Tractor / Vehicle No.</label>
+              <input id="adminVehicleNo" value="UP-80-BT-4419" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Assign Unloading Bay</label>
+              <select id="adminBay" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                <option>Bay-1 (Electronic Kata A)</option>
+                <option>Bay-2 (Main Shed Kata B)</option>
+                <option>Bay-3 (Express Trolley Lane)</option>
+              </select>
+            </div>
+          </div>
+          <button onclick="adminGateCheckIn()" class="w-full bg-blue-700 text-white font-semibold py-2.5 rounded-lg hover:bg-blue-800">
+            Verify QR & Mark GATE_CHECKED_IN
+          </button>
+        </div>
+
+        <!-- 3.3 Quality & Moisture Testing Desk -->
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 text-sm">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold text-base">Step 2: Quality & Moisture Testing Desk</h3>
+            <span class="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded font-semibold">Quality Inspector</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="block font-medium mb-1">Moisture (%)</label>
+              <input id="adminMoisture" type="number" step="0.1" value="13.2" class="w-full border border-slate-300 rounded-lg px-3 py-1.5" />
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Foreign (%)</label>
+              <input id="adminForeign" type="number" step="0.1" value="0.4" class="w-full border border-slate-300 rounded-lg px-3 py-1.5" />
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Decision</label>
+              <select id="adminQualityDecision" class="w-full border border-slate-300 rounded-lg px-2 py-1.5">
+                <option value="QUALITY_APPROVED">Approve (FAQ)</option>
+                <option value="ON_HOLD">Hold for Drying</option>
+                <option value="QUALITY_REJECTED">Reject Lot</option>
+              </select>
+            </div>
+          </div>
+          <input id="adminQualityRemarks" placeholder="Inspector remarks (e.g., Grain dry & clean, approved for Kata)" value="FAQ norms verified via digital meter" class="w-full border border-slate-300 rounded-lg px-3 py-1.5" />
+          <button onclick="adminQualityCheck()" class="w-full bg-purple-700 text-white font-semibold py-2.5 rounded-lg hover:bg-purple-800">
+            Submit Moisture Grade to MongoDB
+          </button>
+        </div>
+
+        <!-- 3.4 Weighbridge (Kata) Console -->
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 text-sm">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold text-base">Step 3: Two-Pass Weighbridge (Kata) Console</h3>
+            <span class="text-xs bg-amber-50 text-amber-800 px-2 py-0.5 rounded font-semibold">Kata Operator</span>
+          </div>
+          <p class="text-xs text-slate-500">Auto-computes Net Weight = Gross Weight - Tare Weight - (Bags × 0.005 Qtl)</p>
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="block font-medium mb-1">Gross Wt (Qtl)</label>
+              <input id="adminGrossWt" type="number" step="0.1" value="68.5" class="w-full border border-slate-300 rounded-lg px-3 py-1.5" />
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Empty Tare (Qtl)</label>
+              <input id="adminTareWt" type="number" step="0.1" value="23.0" class="w-full border border-slate-300 rounded-lg px-3 py-1.5" />
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Gunny Bags</label>
+              <input id="adminBags" type="number" value="90" class="w-full border border-slate-300 rounded-lg px-3 py-1.5" />
+            </div>
+          </div>
+          <button onclick="adminWeighbridgeSubmit()" class="w-full bg-amber-600 text-white font-semibold py-2.5 rounded-lg hover:bg-amber-700">
+            Record Net Weight & Mark WEIGHING_COMPLETED
+          </button>
+        </div>
+
+        <!-- 3.5 Digital J-Form & DBT Settlement Console -->
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 text-sm">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold text-base">Step 4: Digital J-Form & DBT Settlement</h3>
+            <span class="text-xs bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded font-semibold">Billing Officer</span>
+          </div>
+          <p class="text-xs text-slate-500">Calculates Final Net Weight × MSP Rate, issues QR-sealed Digital J-Form, and generates bank UTR.</p>
+          <div id="adminSettlementPreview" class="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs space-y-1">
+            Select a token above to preview net weight and MSP settlement calculation.
+          </div>
+          <button onclick="adminSettlePayment()" class="w-full bg-emerald-700 text-white font-semibold py-2.5 rounded-lg hover:bg-emerald-800">
+            Issue Digital J-Form & Settle Bank DBT Payment
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 hidden bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg text-sm z-50"></div>
+
+  <script>
+    let allTokens = [];
+
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 3500);
+    }
+
+    async function checkHealth() {
+      try {
+        const res = await fetch('/api/v1/health');
+        const data = await res.json();
+        document.getElementById('dbStatusBadge').textContent = '● ' + data.databaseMode;
+      } catch (e) {
+        document.getElementById('dbStatusBadge').textContent = '● API Offline';
+      }
+    }
+
+    function switchPortal(portal) {
+      ['public', 'farmer', 'admin'].forEach((p) => {
+        document.getElementById(`portal-${p}`).classList.toggle('hidden', p !== portal);
+        document.getElementById(`btn-portal-${p}`).classList.toggle('portal-tab-active', p === portal);
+      });
+      if (portal === 'farmer') {
+        loadFarmerTokens();
+        loadTokenTimeline();
+      }
+      if (portal === 'admin') {
+        loadAdminTokensDropdown();
+      }
+    }
+
+    function switchPublicTab(tab) {
+      ['schedules', 'centers', 'guidelines', 'support'].forEach((t) => {
+        document.getElementById(`pub-view-${t}`).classList.toggle('hidden', t !== tab);
+        document.getElementById(`pub-tab-${t}`).classList.toggle('sub-tab-active', t === tab);
+      });
+      if (tab === 'centers') loadCenters();
+      if (tab === 'support') loadGrievances();
+    }
+
+    function switchFarmerTab(tab) {
+      ['dashboard', 'book', 'track'].forEach((t) => {
+        document.getElementById(`farm-view-${t}`).classList.toggle('hidden', t !== tab);
+        document.getElementById(`farm-tab-${t}`).classList.toggle('sub-tab-active', t === tab);
+      });
+      if (tab === 'dashboard') loadFarmerTokens();
+      if (tab === 'track') loadTokenTimeline();
+    }
+
+    async function loadSchedules() {
+      const season = document.getElementById('seasonFilter').value;
+      const res = await fetch(`/api/v1/public/schedules?season=${encodeURIComponent(season)}`);
+      const schedules = await res.json();
+      const tbody = document.getElementById('scheduleTableBody');
+      tbody.innerHTML = schedules.map((s) => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-semibold text-slate-900">${s.cropName} <span class="block text-xs font-normal text-slate-500">${s.variety}</span></td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded bg-green-50 text-green-800 text-xs font-semibold">${s.season}</span></td>
+          <td class="p-3 font-bold text-green-700">₹${s.mspRate.toLocaleString('en-IN')}/Qtl</td>
+          <td class="p-3">≤ ${s.maxMoisturePct}%</td>
+          <td class="p-3 text-xs">${s.startDate} to ${s.endDate}</td>
+          <td class="p-3 text-xs text-slate-600">${s.operatingHours}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadCenters() {
+      const pincode = document.getElementById('pincodeFilter').value;
+      const res = await fetch(`/api/v1/public/centers?pincode=${encodeURIComponent(pincode)}`);
+      const centers = await res.json();
+      const grid = document.getElementById('centersGrid');
+      grid.innerHTML = centers.map((c) => {
+        const pct = Math.round((c.bookedQtl / c.dailyMaxCapacityQtl) * 100);
+        const badgeColor = pct < 70 ? 'bg-emerald-100 text-emerald-800' : pct < 95 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800';
+        const badgeText = pct < 70 ? 'Available' : pct < 95 ? 'Filling Fast' : 'Full';
+        return `
+          <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex justify-between items-start gap-2">
+                <span class="text-xs font-mono text-slate-500">${c.centerCode} • ${c.distanceKm} km</span>
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${badgeColor}">${badgeText} (${pct}%)</span>
+              </div>
+              <h4 class="font-bold text-base mt-1">${c.name}</h4>
+              <p class="text-xs text-slate-500">${c.tehsil}, ${c.district} — Pincode: ${c.pincode}</p>
+              <div class="mt-3 text-xs space-y-1 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                <div class="flex justify-between"><span>Daily Capacity:</span><strong>${c.bookedQtl} / ${c.dailyMaxCapacityQtl} Qtl</strong></div>
+                <div class="flex justify-between"><span>Live Yard Queue:</span><strong class="text-amber-700">${c.liveQueueCount} Tractors</strong></div>
+                <div class="flex justify-between"><span>Bardana Stock:</span><strong>${c.bardanaStockBags} Bags</strong></div>
+              </div>
+            </div>
+            <button onclick="switchPortal('farmer'); switchFarmerTab('book'); document.getElementById('bookCenterCode').value='${c.centerCode}';" class="w-full bg-green-700 text-white text-xs font-semibold py-2 rounded-lg hover:bg-green-800">
+              Select Center & Book Slot
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function runFaqCalculator() {
+      const maxMoisture = parseFloat(document.getElementById('calcCrop').value);
+      const moisture = parseFloat(document.getElementById('calcMoisture').value);
+      const foreign = parseFloat(document.getElementById('calcForeign').value);
+      const box = document.getElementById('calcResultBox');
+
+      if (moisture <= maxMoisture && foreign <= 1.0) {
+        box.className = 'p-4 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 text-sm';
+        box.innerHTML = `<strong>PASS (FAQ Approved):</strong> Moisture (${moisture}%) is within the ${maxMoisture}% limit. Ready for direct Mandi Kata weighing!`;
+      } else {
+        box.className = 'p-4 rounded-lg bg-amber-50 border border-amber-300 text-amber-900 text-sm';
+        box.innerHTML = `<strong>HOLD / DRYING ADVISED:</strong> Moisture (${moisture}%) exceeds ${maxMoisture}% or foreign matter (${foreign}%) > 1%. Sun-dry & winnow before arrival to prevent yard delay.`;
+      }
+    }
+
+    async function loadGrievances() {
+      const res = await fetch('/api/v1/support/tickets');
+      const list = await res.json();
+      const container = document.getElementById('grievanceList');
+      if (list.length === 0) {
+        container.innerHTML = '<p class="text-slate-400 text-xs">No active grievances filed yet.</p>';
+        return;
+      }
+      container.innerHTML = list.map((g) => `
+        <div class="p-3 rounded-lg border border-slate-200 bg-slate-50">
+          <div class="flex justify-between text-xs font-bold">
+            <span class="text-green-800">${g.ticketId} (Token: ${g.tokenId})</span>
+            <span class="text-amber-700">${g.status}</span>
+          </div>
+          <p class="text-xs font-semibold mt-1">${g.category}</p>
+          <p class="text-xs text-slate-600 mt-0.5">${g.description}</p>
+        </div>
+      `).join('');
+    }
+
+    async function submitGrievance(e) {
+      e.preventDefault();
+      const payload = {
+        farmerMobile: document.getElementById('grvMobile').value,
+        tokenId: document.getElementById('grvTokenId').value,
+        centerName: 'Kheragarh Krishi Utpadan Mandi',
+        category: document.getElementById('grvCategory').value,
+        description: document.getElementById('grvDesc').value
+      };
+      await fetch('/api/v1/support/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      document.getElementById('grvDesc').value = '';
+      showToast('Grievance Ticket Registered with 4-Hr SLA!');
+      loadGrievances();
+    }
+
+    async function loadFarmerTokens() {
+      const res = await fetch('/api/v1/tokens');
+      allTokens = await res.json();
+      const container = document.getElementById('farmerTokensList');
+      container.innerHTML = allTokens.map((t) => `
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between space-y-4">
+          <div class="flex justify-between items-start gap-3">
+            <div>
+              <span class="text-xs font-mono bg-slate-100 px-2.5 py-1 rounded font-bold">${t.tokenId}</span>
+              <h4 class="font-bold text-base mt-2">${t.cropName} — ${t.estQuintals} Quintals</h4>
+              <p class="text-xs text-slate-500">${t.centerName}</p>
+              <p class="text-xs text-slate-600 mt-1">Slot: <strong>${t.slotDate} (${t.slotWindow})</strong></p>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-green-100 text-green-800">${t.status}</span>
+              <div class="mt-2 p-2 border border-slate-200 rounded bg-slate-50 text-[10px] font-mono text-center">
+                QR HMAC:<br/><strong>${t.qrSignature}</strong>
+              </div>
+            </div>
+          </div>
+          ${t.settlement?.jFormId ? `
+            <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
+              <strong>Digital J-Form ${t.settlement.jFormId}:</strong> Net Paid <strong>₹${t.settlement.netPayableInr.toLocaleString('en-IN')}</strong> • UTR: <span class="font-mono">${t.settlement.utrNumber}</span>
+            </div>
+          ` : ''}
+          <div class="flex gap-2">
+            <button onclick="document.getElementById('trackTokenInput').value='${t.tokenId}'; switchFarmerTab('track');" class="flex-1 bg-slate-900 text-white text-xs font-semibold py-2 rounded-lg hover:bg-slate-800">
+              View 6-Stage Live Tracker
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function bookProcurementSlot(e) {
+      e.preventDefault();
+      const payload = {
+        farmerName: document.getElementById('bookFarmerName').value,
+        farmerMobile: document.getElementById('bookFarmerMobile').value,
+        khasraNo: document.getElementById('bookKhasra').value,
+        cropName: document.getElementById('bookCropName').value,
+        estQuintals: document.getElementById('bookQuintals').value,
+        centerCode: document.getElementById('bookCenterCode').value,
+        slotDate: document.getElementById('bookSlotDate').value,
+        slotWindow: document.getElementById('bookSlotWindow').value
+      };
+      const res = await fetch('/api/v1/tokens/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'Booking failed');
+        return;
+      }
+      showToast(`e-Token ${data.tokenId} Generated & Locked in MongoDB!`);
+      document.getElementById('trackTokenInput').value = data.tokenId;
+      switchFarmerTab('track');
+    }
+
+    async function loadTokenTimeline() {
+      const tokenId = document.getElementById('trackTokenInput').value.trim();
+      const container = document.getElementById('trackerContainer');
+      const res = await fetch(`/api/v1/tokens/${encodeURIComponent(tokenId)}/timeline`);
+      if (!res.ok) {
+        container.innerHTML = `<p class="text-red-600 text-sm">Token ID "${tokenId}" not found.</p>`;
+        return;
+      }
+      const token = await res.json();
+      const stages = [
+        { key: 'SLOT_CONFIRMED', label: '1. Slot Confirmed & Capacity Locked' },
+        { key: 'GATE_CHECKED_IN', label: '2. Mandi Gate QR Verified & Queue Assigned' },
+        { key: 'QUALITY_APPROVED', label: '3. FAQ Moisture & Quality Graded' },
+        { key: 'WEIGHING_COMPLETED', label: '4. Electronic Weighbridge (Kata) Completed' },
+        { key: 'RECEIPT_GENERATED', label: '5. Digital J-Form Sale Receipt Issued' },
+        { key: 'PAYMENT_SETTLED', label: '6. Direct Benefit Transfer (DBT) Bank Settled' }
+      ];
+
+      const completedStages = new Set(token.timeline.map((t) => t.stage));
+      if (token.status === 'ON_HOLD') completedStages.add('ON_HOLD');
+
+      container.innerHTML = `
+        <div class="flex flex-wrap justify-between items-center border-b border-slate-200 pb-4 mb-5 gap-4">
+          <div>
+            <span class="text-xs font-mono bg-green-100 text-green-800 px-2.5 py-1 rounded font-bold">${token.tokenId}</span>
+            <h4 class="text-lg font-bold mt-1">${token.farmerName} — ${token.cropName} (${token.estQuintals} Qtl Est.)</h4>
+            <p class="text-xs text-slate-500">${token.centerName} • Slot: ${token.slotDate} (${token.slotWindow})</p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs uppercase tracking-wider text-slate-400 block">Current Status</span>
+            <span class="text-sm font-bold text-green-700">${token.status}</span>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="space-y-3">
+            <h5 class="font-bold text-sm text-slate-700">6-Stage Procurement Progress</h5>
+            ${stages.map((s) => {
+              const done = completedStages.has(s.key);
+              return `
+                <div class="flex items-center gap-3 p-3 rounded-lg border ${done ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-slate-50 border-slate-200 text-slate-400'}">
+                  <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${done ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-500'}">
+                    ${done ? '✓' : '•'}
+                  </div>
+                  <span class="text-sm font-semibold">${s.label}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="space-y-3">
+            <h5 class="font-bold text-sm text-slate-700">Live Audit Log & Timestamps</h5>
+            <div class="space-y-2.5">
+              ${token.timeline.map((log) => `
+                <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+                  <div class="flex justify-between font-bold text-slate-800">
+                    <span>${log.stage}</span>
+                    <span class="text-slate-400 font-normal">${new Date(log.timestamp).toLocaleTimeString()}</span>
+                  </div>
+                  <p class="text-slate-600 mt-1">${log.note}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadAdminTokensDropdown() {
+      const res = await fetch('/api/v1/tokens');
+      allTokens = await res.json();
+      const select = document.getElementById('adminTokenSelector');
+      select.innerHTML = allTokens.map((t) => `
+        <option value="${t.tokenId}">${t.tokenId} — ${t.farmerName} (${t.status})</option>
+      `).join('');
+      syncAdminSelectedToken();
+    }
+
+    function syncAdminSelectedToken() {
+      const selectedId = document.getElementById('adminTokenSelector').value;
+      const token = allTokens.find((t) => t.tokenId === selectedId);
+      if (!token) return;
+      const netWt = token.weighbridge?.netWeightQtl || token.estQuintals;
+      const payable = Math.round(netWt * token.mspRate);
+      document.getElementById('adminSettlementPreview').innerHTML = `
+        <div>Farmer: <strong>${token.farmerName}</strong> (${token.cropName})</div>
+        <div>Recorded Net Weight: <strong>${netWt} Qtl</strong> × MSP <strong>₹${token.mspRate}/Qtl</strong></div>
+        <div class="text-emerald-800 font-bold text-sm pt-1">Total Payable via DBT: ₹${payable.toLocaleString('en-IN')}</div>
+      `;
+    }
+
+    async function adminGateCheckIn() {
+      const tokenId = document.getElementById('adminTokenSelector').value;
+      const res = await fetch(`/api/v1/admin/tokens/${tokenId}/gate-checkin`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          vehicleNo: document.getElementById('adminVehicleNo').value,
+          assignedBay: document.getElementById('adminBay').value
+        })
+      });
+      if (res.ok) {
+        showToast(`Token ${tokenId} Checked-In at Mandi Gate!`);
+        loadAdminTokensDropdown();
+      }
+    }
+
+    async function adminQualityCheck() {
+      const tokenId = document.getElementById('adminTokenSelector').value;
+      const res = await fetch(`/api/v1/admin/tokens/${tokenId}/quality-check`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          moisturePct: document.getElementById('adminMoisture').value,
+          foreignMatterPct: document.getElementById('adminForeign').value,
+          decision: document.getElementById('adminQualityDecision').value,
+          remarks: document.getElementById('adminQualityRemarks').value
+        })
+      });
+      if (res.ok) {
+        showToast(`Quality report saved for ${tokenId}!`);
+        loadAdminTokensDropdown();
+      }
+    }
+
+    async function adminWeighbridgeSubmit() {
+      const tokenId = document.getElementById('adminTokenSelector').value;
+      const res = await fetch(`/api/v1/admin/tokens/${tokenId}/weighing`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          grossWeightQtl: document.getElementById('adminGrossWt').value,
+          tareWeightQtl: document.getElementById('adminTareWt').value,
+          gunnyBagCount: document.getElementById('adminBags').value
+        })
+      });
+      if (res.ok) {
+        showToast(`Weighbridge Net Weight recorded for ${tokenId}!`);
+        loadAdminTokensDropdown();
+      }
+    }
+
+    async function adminSettlePayment() {
+      const tokenId = document.getElementById('adminTokenSelector').value;
+      const res = await fetch(`/api/v1/admin/tokens/${tokenId}/settlement`, {
+        method: 'POST'
+      });
+      if (res.ok) {
+        showToast(`Digital J-Form issued & DBT settled for ${tokenId}!`);
+        loadAdminTokensDropdown();
+      }
+    }
+
+    // Initialize on load
+    checkHealth();
+    loadSchedules();
+  </script>
+</body>
+</html>
